@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { auth, login } from "../firebaseConnect";
-import { onAuthStateChanged } from "firebase/auth";
+import { login } from "../firebaseConnect";
+
 import { useNavigate } from "react-router-dom";
+// import { useContext } from "react";
+// import { AuthContext } from "../AuthContext";
+// import { Navigate } from "react-router-dom";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -20,6 +23,9 @@ const LoginPage = () => {
         }
     };
 
+    // const { user } = useContext(AuthContext);
+
+    // if (user === null) {
     return (
         <>
             <form onSubmit={onLogin}>
@@ -45,6 +51,15 @@ const LoginPage = () => {
             </form>
         </>
     );
+    // } else if (user?.uid) {
+    //     return (
+    //         <h1>
+    //             <Navigate replace to="/home" />
+    //         </h1>
+    //     );
+    // } else {
+    //     return <h2>Please wait while it loads</h2>;
+    // }
 };
 
 export default LoginPage;
