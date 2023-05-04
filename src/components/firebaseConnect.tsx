@@ -1,14 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    onAuthStateChanged
-} from "firebase/auth";
-import { redirect } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC0pU6HaGc6Hvwvj1JEEuL8aKgH9qe6Qus",
+    apiKey: import.meta.env.VITE_API_KEY,
     authDomain: "loginapp-592bf.firebaseapp.com",
     projectId: "loginapp-592bf",
     storageBucket: "loginapp-592bf.appspot.com",

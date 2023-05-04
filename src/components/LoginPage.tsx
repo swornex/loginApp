@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { login } from "../firebaseConnect";
+import { login } from "./firebaseConnect";
 
-import { useNavigate } from "react-router-dom";
-// import { useContext } from "react";
-// import { AuthContext } from "../AuthContext";
-// import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
+    const { user } = useContext(AuthContext);
+
     const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            // await signInWithEmailAndPassword(auth, email, password);
             await login(email, password);
             navigate("/home");
         } catch (error) {
@@ -23,9 +23,12 @@ const LoginPage = () => {
         }
     };
 
-    // const { user } = useContext(AuthContext);
+    if (user === undefined) return <div>Loading</div>;
 
-    // if (user === null) {
+    if (user) {
+        return <Navigate to="/home" />;
+    }
+
     return (
         <>
             <form onSubmit={onLogin}>
@@ -51,15 +54,6 @@ const LoginPage = () => {
             </form>
         </>
     );
-    // } else if (user?.uid) {
-    //     return (
-    //         <h1>
-    //             <Navigate replace to="/home" />
-    //         </h1>
-    //     );
-    // } else {
-    //     return <h2>Please wait while it loads</h2>;
-    // }
 };
 
 export default LoginPage;
