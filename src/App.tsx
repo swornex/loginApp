@@ -7,36 +7,25 @@ import LoginPage from "./components/LoginPage";
 
 import Root from "./components/Root";
 import { AuthProvider } from "./components/AuthProvider";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
-    // const router = createBrowserRouter([
-    //     {
-    //         path: "/root",
-    //         element: <Root />,
-    //         children: [
-    //             {
-    //                 path: "home",
-    //                 element: <Home />
-    //             },
-    //             {
-    //                 path: "login",
-    //                 element: <LoginPage />
-    //             }
-    //         ]
-    //     }
-    // ]);
-
-    // return <>{/* <RouterProvider router={router} /> */}</>;
-
     return (
         <>
             <AuthProvider>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<Root />}>
-                            <Route path="home" element={<Home />} />
-                            <Route path="login" element={<LoginPage />} />
-                        </Route>
+                        <Route path="/" element={<Root />} />
+                        <Route
+                            path="/home"
+                            element={
+                                <RequireAuth>
+                                    <Home />
+                                </RequireAuth>
+                            }
+                        />
+
+                        <Route path="/login" element={<LoginPage />} />
                     </Routes>
                 </BrowserRouter>
             </AuthProvider>

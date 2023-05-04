@@ -1,6 +1,6 @@
-import { auth } from "../firebaseConnect";
+import { auth } from "./firebaseConnect";
 import { User, onAuthStateChanged } from "firebase/auth";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "./AuthContext";
 import { PropsWithChildren, useEffect, useState } from "react";
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
