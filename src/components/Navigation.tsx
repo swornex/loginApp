@@ -1,4 +1,9 @@
+import { signout } from "./firebaseConnect";
+
 const Navigation = () => {
+    const handleSignOut = async () => {
+        await signout();
+    };
     return (
         <div className="nav-wrapper">
             <div className="nav-container">
@@ -13,7 +18,9 @@ const Navigation = () => {
                 </a>
             </div>
             <div>
-                <button className="button">Signout </button>
+                <button className="button" onClick={handleSignOut}>
+                    Signout
+                </button>
             </div>
         </div>
     );
