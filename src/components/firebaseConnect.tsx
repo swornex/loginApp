@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_API_KEY,
@@ -17,4 +17,8 @@ export const auth = getAuth(app);
 
 export const login = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signout = async () => {
+    await signOut(auth);
 };
