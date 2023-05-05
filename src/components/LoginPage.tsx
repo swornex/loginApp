@@ -8,6 +8,7 @@ import { AuthContext } from "./AuthContext";
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const { user } = useContext(AuthContext);
@@ -16,10 +17,12 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
+            setIsLoading(true);
             await login(email, password);
-            navigate("/home");
         } catch (error) {
             alert("Incorrect user email or password");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -31,27 +34,46 @@ const LoginPage = () => {
 
     return (
         <>
-            <form onSubmit={onLogin}>
-                <label htmlFor="email">Email:</label>
-                <input
-                    type="text"
-                    name="email"
-                    id="email"
-                    placeholder="abcd@gmail.com"
-                    onChange={(e) => setEmail(e.target.value)}
+            <div className="login-wrapper">
+                <img
+                    className="image"
+                    src="https://uxwing.com/wp-content/themes/uxwing/download/editing-user-action/user-account-login-icon.png"
                 />
-                <br />
-                <label htmlFor="password">Password</label>
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoComplete=""
-                />
-                <button>Login</button>
-            </form>
+
+                <div className="form-wrapper">
+                    <form onSubmit={onLogin} className="form">
+                        <label htmlFor="email">Email:</label>
+
+                        <input
+                            type="text"
+                            name="email"
+                            id="email"
+                            placeholder="abcd@gmail.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <br />
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="password"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <br />
+                        <button className="button" disabled={isLoading}>
+                            {isLoading ? "Loading..." : "Login"}
+                        </button>
+                    </form>
+                    <h5>New account?</h5>
+                    <hr />
+                    <h5>
+                        <a href="#" className="sign-up">
+                            Signup
+                        </a>
+                    </h5>
+                </div>
+            </div>
         </>
     );
 };
