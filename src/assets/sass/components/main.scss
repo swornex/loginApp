@@ -4,7 +4,6 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
 
     font-synthesis: none;
@@ -22,6 +21,7 @@ body {
     margin: 0.7rem 2rem;
     padding: 0.5rem 0.8rem;
     border-style: none;
+    border-radius: 5px;
 
     &:hover {
         background-color: #483f3f;
@@ -51,5 +51,39 @@ body {
                 background-color: #222;
             }
         }
+    }
+}
+
+/*form*/
+.login-wrapper {
+    position: relative;
+    align-items: center;
+    top: 10rem;
+
+    .image {
+        width: 100px;
+    }
+
+    .form-wrapper {
+        margin: auto;
+        width: fit-content;
+
+        .form {
+            padding: 10px 0;
+
+            label {
+                display: block;
+                text-align: left;
+
+                &:not(:first-child) {
+                    margin-top: 1rem;
+                }
+            }
+        }
+    }
+
+    .sign-up {
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.87);
     }
 }
