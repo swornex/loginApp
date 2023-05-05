@@ -51,6 +51,7 @@ function App() {
                         />
 
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/*" element={<Root />} />
                     </Routes>
                 </BrowserRouter>
             </AuthProvider>
