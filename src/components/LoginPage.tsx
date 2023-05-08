@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login } from "./firebaseConnect";
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
@@ -9,7 +9,6 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
 
     const { user } = useContext(AuthContext);
 
@@ -34,7 +33,7 @@ const LoginPage = () => {
 
     return (
         <>
-            <div className="login-wrapper">
+            <div className="main-form-wrapper">
                 <img
                     className="image"
                     src="https://uxwing.com/wp-content/themes/uxwing/download/editing-user-action/user-account-login-icon.png"
@@ -68,9 +67,9 @@ const LoginPage = () => {
                     <h5>New account?</h5>
                     <hr />
                     <h5>
-                        <a href="#" className="sign-up">
+                        <Link to="/signup" className="sign-up">
                             Signup
-                        </a>
+                        </Link>
                     </h5>
                 </div>
             </div>

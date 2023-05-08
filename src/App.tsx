@@ -8,6 +8,7 @@ import RequireAuth from "./components/RequireAuth";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import SignupPage from "./components/SignUpPage";
 
 function App() {
     return (
@@ -51,6 +52,7 @@ function App() {
                         />
 
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/signup" element={<SignupPage />} />
                         <Route path="/*" element={<Root />} />
                     </Routes>
                 </BrowserRouter>
