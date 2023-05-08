@@ -25,12 +25,6 @@ const LoginPage = () => {
         }
     };
 
-    if (user === undefined) return <div>Loading</div>;
-
-    if (user) {
-        return <Navigate to="/home" />;
-    }
-
     return (
         <>
             <div className="main-form-wrapper">
