@@ -5,6 +5,7 @@ import LoginPage from "./components/LoginPage";
 import Root from "./components/Root";
 import { AuthProvider } from "./components/AuthProvider";
 import RequireAuth from "./components/RequireAuth";
+import CheckAuth from "./components/CheckAuth";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import Contact from "./components/Contact";
@@ -51,8 +52,22 @@ function App() {
                             }
                         />
 
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignupPage />} />
+                        <Route
+                            path="/login"
+                            element={
+                                <CheckAuth>
+                                    <LoginPage />
+                                </CheckAuth>
+                            }
+                        />
+                        <Route
+                            path="/signup"
+                            element={
+                                <CheckAuth>
+                                    <SignupPage />
+                                </CheckAuth>
+                            }
+                        />
                         <Route path="/*" element={<Root />} />
                     </Routes>
                 </BrowserRouter>
