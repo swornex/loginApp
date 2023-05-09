@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { addUser, register } from "./firebaseConnect";
+import profileImage from "../assets/images/profile.png";
+import loginRegisterImg from "../assets/images/login.png";
 
-const SignupPage = () => {
+const UserDetails = () => {
+    const location = useLocation();
     const [user, setUser] = useState({
         name: "",
         email: "",
@@ -10,6 +13,8 @@ const SignupPage = () => {
         number: "",
         address: ""
     });
+
+    const isSignUp = location.pathname === "/signup";
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -45,10 +50,11 @@ const SignupPage = () => {
     return (
         <>
             <div className="main-form-wrapper">
-                <img
-                    className="image"
-                    src="https://uxwing.com/wp-content/themes/uxwing/download/editing-user-action/user-account-login-icon.png"
-                />
+                {isSignUp ? (
+                    <img className="image" src={loginRegisterImg} />
+                ) : (
+                    <img className="image" src={profileImage} />
+                )}
 
                 <div className="form-wrapper">
                     <form onSubmit={onRegister} className="form">
@@ -72,16 +78,21 @@ const SignupPage = () => {
                             onChange={handleUserInput}
                             required
                         />
-                        <label htmlFor="password">Password:</label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            placeholder="password"
-                            value={user.password}
-                            onChange={handleUserInput}
-                            required
-                        />
+                        {isSignUp && (
+                            <>
+                                <label htmlFor="password">Password:</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    placeholder="password"
+                                    value={user.password}
+                                    onChange={handleUserInput}
+                                    required
+                                />
+                            </>
+                        )}
+
                         <label htmlFor="number">Number:</label>
                         <input
                             type="text"
@@ -103,20 +114,28 @@ const SignupPage = () => {
                             required
                         />
                         <button className="button" disabled={isLoading}>
-                            {isLoading ? "Loading..." : "Sign Up"}
+                            {isLoading
+                                ? "Loading..."
+                                : isSignUp
+                                ? "Sign Up"
+                                : "Update"}
                         </button>
                     </form>
-                    <h5>Already have an account?</h5>
-                    <hr />
-                    <h5>
-                        <Link to="/login" className="login">
-                            Login
-                        </Link>
-                    </h5>
+                    {isSignUp && (
+                        <>
+                            <h5>Already have an account?</h5>
+                            <hr />
+                            <h5>
+                                <Link to="/login" className="login">
+                                    Login
+                                </Link>
+                            </h5>
+                        </>
+                    )}
                 </div>
             </div>
         </>
     );
 };
 
-export default SignupPage;
+export default UserDetails;

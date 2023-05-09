@@ -9,7 +9,7 @@ import CheckAuth from "./components/CheckAuth";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import Contact from "./components/Contact";
-import SignupPage from "./components/SignUpPage";
+import UserForm from "./components/UserForm";
 
 function App() {
     return (
@@ -64,8 +64,19 @@ function App() {
                             path="/signup"
                             element={
                                 <CheckAuth>
-                                    <SignupPage />
+                                    <UserForm />
                                 </CheckAuth>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <RequireAuth>
+                                    <>
+                                        <Navigation />
+                                        <UserForm />
+                                    </>
+                                </RequireAuth>
                             }
                         />
                         <Route path="/*" element={<Root />} />

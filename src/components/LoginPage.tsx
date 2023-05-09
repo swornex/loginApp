@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { login } from "./firebaseConnect";
 
-import { Navigate, Link } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { Link } from "react-router-dom";
+import loginRegisterImg from "../assets/images/login.png";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-    const { user } = useContext(AuthContext);
 
     const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -28,10 +25,7 @@ const LoginPage = () => {
     return (
         <>
             <div className="main-form-wrapper">
-                <img
-                    className="image"
-                    src="https://uxwing.com/wp-content/themes/uxwing/download/editing-user-action/user-account-login-icon.png"
-                />
+                <img className="image" src={loginRegisterImg} />
 
                 <div className="form-wrapper">
                     <form onSubmit={onLogin} className="form">
