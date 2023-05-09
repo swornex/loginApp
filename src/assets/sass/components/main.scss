@@ -18,7 +18,7 @@ body {
 }
 
 .button {
-    margin: 0.7rem 3rem;
+    margin: 0.7rem 4rem;
     padding: 0.5rem 0.8rem;
     border-style: none;
     border-radius: 5px;
@@ -53,6 +53,11 @@ body {
                 background-color: #222;
             }
         }
+    }
+
+    .image {
+        width: 40px;
+        cursor: pointer;
     }
 }
 
