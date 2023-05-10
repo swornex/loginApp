@@ -1,6 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { addUser, fetchOne, register, updateUserDoc } from "./firebaseConnect";
+import {
+    addUser,
+    fetchOne,
+    register,
+    updateUserDoc
+} from "../firebase/userFirebase";
 import userImage from "../assets/images/userImage.png";
 import { AuthContext } from "./AuthContext";
 
