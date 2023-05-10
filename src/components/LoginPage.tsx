@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login } from "./firebaseConnect";
+import { login } from "../firebase/UserFirebase";
 
 import { Link } from "react-router-dom";
 import userImage from "../assets/images/userImage.png";

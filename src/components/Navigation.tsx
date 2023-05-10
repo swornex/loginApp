@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { signout } from "./firebaseConnect";
+import { signout } from "../firebase/UserFirebase";
 
 const Navigation = () => {
     const handleSignOut = async () => {
