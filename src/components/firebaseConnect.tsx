@@ -1,6 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc
+} from "firebase/firestore";
 import {
     getAuth,
     signInWithEmailAndPassword,
@@ -19,8 +25,9 @@ const firebaseConfig = {
 };
 
 type UserObj = {
+    id: string;
     name: string;
-    email: string;
+    email?: string;
     number: string;
     address: string;
 };
@@ -40,19 +47,47 @@ export const signout = async () => {
 };
 
 export const register = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    return createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const addUser = async ({ name, email, number, address }: UserObj) => {
+export const addUser = async ({
+    id,
+    name,
+    email,
+    number,
+    address
+}: UserObj) => {
     try {
-        const reference = collection(db, "users");
-
-        const newDocRef = doc(reference);
-
-        await setDoc(newDocRef, {
-            id: newDocRef.id,
+        await setDoc(doc(db, "users", id), {
+            id,
             name,
             email,
+            number,
+            address
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+export const fetchOne = async (id: string) => {
+    try {
+        const userDoc = doc(db, "users", id);
+        const user = (await getDoc(userDoc)).data();
+        if (!user) {
+            console.log("No such document");
+        } else {
+            return user;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+export const updateUserDoc = async ({ id, name, number, address }: UserObj) => {
+    try {
+        await updateDoc(doc(db, "users", id), {
+            name,
             number,
             address
         });

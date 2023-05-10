@@ -2,7 +2,7 @@ import { useState } from "react";
 import { login } from "./firebaseConnect";
 
 import { Link } from "react-router-dom";
-import loginRegisterImg from "../assets/images/login.png";
+import userImage from "../assets/images/userImage.png";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -25,7 +25,7 @@ const LoginPage = () => {
     return (
         <>
             <div className="main-form-wrapper">
-                <img className="image" src={loginRegisterImg} />
+                <img className="image" src={userImage} />
 
                 <div className="form-wrapper">
                     <form onSubmit={onLogin} className="form">
