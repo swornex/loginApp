@@ -1,14 +1,23 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../authentication/AuthContext";
 import { addTodo } from "../../firebase/todoFirebase";
+import { useNavigate } from "react-router-dom";
+
 const AddTodo = () => {
+    // State to manage the input values
     const [todo, setTodo] = useState({
         title: "",
         desc: "",
         date: ""
     });
+
+    // React Router hook for navigation
+    const navigate = useNavigate();
+
+    // Accessing the user object from the AuthContext
     const { user } = useContext(AuthContext);
 
+    // Handler for input changes
     const handleTodoInput = (
         e:
             | React.ChangeEvent<HTMLInputElement>
@@ -20,16 +29,21 @@ const AddTodo = () => {
         setTodo((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Function to handle the form submission
     const onAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (user) {
+            // Call the addTodo function with the necessary data
             await addTodo({
                 userId: user.uid,
                 title: todo.title,
                 desc: todo.desc,
                 date: todo.date
             });
+
+            // Show success message and navigate to the home page
             alert("Successfully added.");
+            navigate("/home");
         }
     };
 
@@ -70,6 +84,7 @@ const AddTodo = () => {
                         onChange={handleTodoInput}
                         required
                     />
+
                     <button type="submit" className="button">
                         Add
                     </button>

@@ -1,6 +1,9 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+// Import necessary modules and components
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { Todo } from "../components/Home";
 
+// Type for todo object
 type TodoObj = {
     userId: string;
     title: string;
@@ -8,10 +11,13 @@ type TodoObj = {
     date: string;
 };
 
+// Function to add a new todo document
 export const addTodo = async ({ userId, title, desc, date }: TodoObj) => {
     try {
+        // Generate a new unique ID for the todo document
         const id = doc(collection(db, "todos")).id;
 
+        // Set the todo document in the "todos" collection with the provided data
         await setDoc(doc(db, "todos", id), {
             id,
             userId,
@@ -22,4 +28,11 @@ export const addTodo = async ({ userId, title, desc, date }: TodoObj) => {
     } catch (error) {
         console.log(error.message);
     }
+};
+
+// Function to fetch all todo documents
+export const getTodoDocs = async () => {
+    // Retrieve all todo documents from the "todos" collection
+    const res = await getDocs(collection(db, "todos"));
+    return res.docs.map((doc) => doc.data()) as Todo[]; // Return the fetched documents
 };
