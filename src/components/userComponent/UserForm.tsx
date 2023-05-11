@@ -1,8 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { addUser, fetchOne, register, updateUserDoc } from "./firebaseConnect";
-import userImage from "../assets/images/userImage.png";
-import { AuthContext } from "./AuthContext";
+import {
+    addUser,
+    fetchOne,
+    register,
+    updateUserDoc
+} from "../../firebase/userFirebase";
+import userImage from "../../assets/images/userImage.png";
+
+import { AuthContext } from "../../authentication/AuthContext";
 
 type UserDetailsType = {
     name: string;
@@ -57,9 +63,6 @@ const UserDetails = () => {
         const name = e.target.name;
         const value = e.target.value;
 
-        // if (userDetails && typeof name === "string") {
-        // setUserDetails({ ...userDetails, [name]: value });
-        // }
         if (userDetails != null) {
             setUserDetails((prev) => {
                 if (prev) {
