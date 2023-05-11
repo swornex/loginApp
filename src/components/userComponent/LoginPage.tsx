@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { login } from "../firebase/userFirebase";
+import { login } from "../../firebase/userFirebase";
 
 import { Link } from "react-router-dom";
-import userImage from "../assets/images/userImage.png";
+import userImage from "../../assets/images/userImage.png";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");

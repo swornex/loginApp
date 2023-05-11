@@ -1,15 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
-import LoginPage from "./components/LoginPage";
+import LoginPage from "./components/userComponent/LoginPage";
 
 import Root from "./components/Root";
-import { AuthProvider } from "./components/AuthProvider";
-import RequireAuth from "./components/RequireAuth";
-import CheckAuth from "./components/CheckAuth";
+import { AuthProvider } from "./authentication/AuthProvider";
+import RequireAuth from "./authentication/RequireAuth";
+import CheckAuth from "./authentication/CheckAuth";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import Contact from "./components/Contact";
-import UserForm from "./components/UserForm";
+import UserForm from "./components/userComponent/UserForm";
+import AddTodo from "./components/todoComponent/AddTodo";
 
 function App() {
     return (
@@ -79,6 +80,19 @@ function App() {
                                 </RequireAuth>
                             }
                         />
+                        <Route path="/todos">
+                            <Route
+                                path="addtodo"
+                                element={
+                                    <RequireAuth>
+                                        <>
+                                            <Navigation />
+                                            <AddTodo />
+                                        </>
+                                    </RequireAuth>
+                                }
+                            />
+                        </Route>
                         <Route path="/*" element={<Root />} />
                     </Routes>
                 </BrowserRouter>

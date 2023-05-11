@@ -91,7 +91,8 @@ body {
                 }
             }
 
-            input {
+            input,
+            textarea {
                 width: 100%;
                 padding: 5px;
                 border-radius: 5px;
@@ -103,5 +104,15 @@ body {
     .login {
         text-decoration: none;
         color: #242424;
+    }
+}
+
+/*Table*/
+table {
+    width: 100%;
+
+    th,
+    td {
+        border: 1px solid white;
     }
 }
