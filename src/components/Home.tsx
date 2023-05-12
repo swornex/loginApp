@@ -55,7 +55,6 @@ const Home = () => {
                                 <td>{list.desc}</td>
                                 <td>{list.dueDate}</td>
                                 <td>
-                                    {/* <a href={`todos/view/${list.id}`}>view</a> */}
                                     <Link
                                         to={`/todos/view/${list.id}`}
                                         state={list}
