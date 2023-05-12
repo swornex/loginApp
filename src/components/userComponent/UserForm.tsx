@@ -5,7 +5,7 @@ import {
     fetchOne,
     register,
     updateUserDoc
-} from "../../firebase/userFirebase";
+} from "../../firebase/UserFirebase";
 import userImage from "../../assets/images/userImage.png";
 
 import { AuthContext } from "../../authentication/AuthContext";

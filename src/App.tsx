@@ -11,6 +11,7 @@ import About from "./components/About";
 import Contact from "./components/Contact";
 import UserForm from "./components/userComponent/UserForm";
 import AddTodo from "./components/todoComponent/AddTodo";
+import ViewTodo from "./components/todoComponent/ViewTodo";
 
 function App() {
     return (
@@ -88,6 +89,17 @@ function App() {
                                         <>
                                             <Navigation />
                                             <AddTodo />
+                                        </>
+                                    </RequireAuth>
+                                }
+                            />
+                            <Route
+                                path="view/:id"
+                                element={
+                                    <RequireAuth>
+                                        <>
+                                            <Navigation />
+                                            <ViewTodo />
                                         </>
                                     </RequireAuth>
                                 }
