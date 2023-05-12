@@ -116,3 +116,21 @@ table {
         border: 1px solid white;
     }
 }
+
+/*view*/
+.box-wrapper {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    background-color: #333;
+    width: fit-content;
+    padding: 0 2rem 0 0;
+    margin: 8rem auto;
+    text-align: justify;
+
+    ul {
+        list-style: none;
+    }
+
+    .button {
+        margin: auto;
+    }
+}

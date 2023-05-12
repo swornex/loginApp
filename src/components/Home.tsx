@@ -1,5 +1,5 @@
 // Import necessary modules and components
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getTodoDocs } from "../firebase/todoFirebase";
 
@@ -48,14 +48,20 @@ const Home = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {lists.map((list: Todo) => {
+                    {lists.map((list) => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
                                 <td>{list.desc}</td>
                                 <td>{list.dueDate}</td>
                                 <td>
-                                    <a href="#">view</a>
+                                    {/* <a href={`todos/view/${list.id}`}>view</a> */}
+                                    <Link
+                                        to={`/todos/view/${list.id}`}
+                                        state={list}
+                                    >
+                                        View
+                                    </Link>
                                 </td>
                                 <td>
                                     <a href="#">edit</a>
