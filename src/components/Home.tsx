@@ -1,7 +1,8 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { getTodoDocs } from "../firebase/todoFirebase";
+import { AuthContext } from "../authentication/AuthContext";
 
 export type Todo = {
     id: string;
@@ -14,7 +15,7 @@ export type Todo = {
 const Home = () => {
     const navigate = useNavigate();
     const [lists, setLists] = useState<Todo[]>([]);
-
+    const { user } = useContext(AuthContext);
     // Handle click event for the "Add Todo" button
     const handleTodoButton = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -22,13 +23,20 @@ const Home = () => {
     };
 
     // Fetch todo documents from Firebase
-    const handleFetch = async () => {
-        setLists(await getTodoDocs()); // Update the lists state with the fetched data
-    };
 
     useEffect(() => {
+        const handleFetch = async () => {
+            if (!user) {
+                return; // If the user is not defined, exit the function
+            }
+            // Call the function getTodoDocs with the user's uid and wait for the result
+            const allTodoList = await getTodoDocs(user.uid);
+
+            // Update the lists state with the fetched data
+            setLists(allTodoList);
+        };
         handleFetch(); // Fetch todo documents when the component mounts
-    }, []);
+    }, [user]);
 
     return (
         <>
