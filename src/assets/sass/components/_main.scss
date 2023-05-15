@@ -130,3 +130,15 @@ table {
         list-style: none;
     }
 }
+
+.delete-btn {
+    border: none;
+    background-color: #242424;
+    cursor: pointer;
+}
+
+.link {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: small;
+}

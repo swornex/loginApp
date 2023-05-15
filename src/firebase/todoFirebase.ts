@@ -1,6 +1,7 @@
 // Import necessary modules and components
 import {
     collection,
+    deleteDoc,
     doc,
     getDoc,
     getDocs,
@@ -54,6 +55,14 @@ export const fetchOneTodo = async (id: string) => {
         const todoDoc = doc(db, "todos", id);
         const res = (await getDoc(todoDoc)).data();
         return res as Todo | undefined;
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+export const deleteTodoDoc = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, "todos", id));
     } catch (error) {
         console.log(error.message);
     }
