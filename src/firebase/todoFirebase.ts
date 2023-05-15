@@ -1,6 +1,7 @@
 // Import necessary modules and components
 import {
     collection,
+    deleteDoc,
     doc,
     getDoc,
     getDocs,
@@ -77,6 +78,14 @@ export const updateTodoDoc = async ({ id, title, desc, date }: EditTodoObj) => {
             desc,
             dueDate: date
         });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+export const deleteTodoDoc = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, "todos", id));
     } catch (error) {
         console.log(error.message);
     }

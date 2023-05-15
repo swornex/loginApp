@@ -1,7 +1,7 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import { getTodoDocs } from "../firebase/todoFirebase";
+import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
 
 export type Todo = {
@@ -23,20 +23,25 @@ const Home = () => {
     };
 
     // Fetch todo documents from Firebase
+    const handleFetch = async () => {
+        if (!user) {
+            return; // If the user is not defined, exit the function
+        }
+        // Call the function getTodoDocs with the user's uid and wait for the result
+        const allTodoList = await getTodoDocs(user.uid);
 
+        // Update the lists state with the fetched data
+        setLists(allTodoList);
+    };
     useEffect(() => {
-        const handleFetch = async () => {
-            if (!user) {
-                return; // If the user is not defined, exit the function
-            }
-            // Call the function getTodoDocs with the user's uid and wait for the result
-            const allTodoList = await getTodoDocs(user.uid);
-
-            // Update the lists state with the fetched data
-            setLists(allTodoList);
-        };
         handleFetch(); // Fetch todo documents when the component mounts
-    }, [user]);
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        await deleteTodoDoc(id);
+
+        handleFetch();
+    };
 
     return (
         <>
@@ -63,17 +68,31 @@ const Home = () => {
                                 <td>{list.desc}</td>
                                 <td>{list.dueDate}</td>
                                 <td>
-                                    <Link to={`/todos/view/${list.id}`}>
+                                    <Link
+                                        to={`/todos/view/${list.id}`}
+                                        className="link"
+                                    >
                                         View
                                     </Link>
                                 </td>
                                 <td>
-                                    <Link to={`/todos/edit/${list.id}`}>
+                                    <Link
+                                        to={`/todos/edit/${list.id}`}
+                                        className="link"
+                                    >
                                         Edit
                                     </Link>
                                 </td>
                                 <td>
-                                    <a href="#">delete</a>
+                                    <button
+                                        className="delete-btn"
+                                        type="button"
+                                        onClick={() => {
+                                            handleDelete(list.id);
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         );
