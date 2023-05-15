@@ -63,15 +63,14 @@ const Home = () => {
                                 <td>{list.desc}</td>
                                 <td>{list.dueDate}</td>
                                 <td>
-                                    <Link
-                                        to={`/todos/view/${list.id}`}
-                                        state={list}
-                                    >
+                                    <Link to={`/todos/view/${list.id}`}>
                                         View
                                     </Link>
                                 </td>
                                 <td>
-                                    <a href="#">edit</a>
+                                    <Link to={`/todos/edit/${list.id}`}>
+                                        Edit
+                                    </Link>
                                 </td>
                                 <td>
                                     <a href="#">delete</a>

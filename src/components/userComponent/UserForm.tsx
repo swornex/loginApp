@@ -86,11 +86,13 @@ const UserDetails = () => {
                         return;
                     }
 
+                    //register new user from the given email and password
                     const newUser = await register(
                         userDetails.email,
                         userDetails.password
                     );
 
+                    //call addUser function with the necessary data
                     await addUser({
                         id: newUser.user.uid,
                         name: userDetails.name,
@@ -101,6 +103,7 @@ const UserDetails = () => {
                     alert("Successfully Signed up.");
                 } else {
                     if (user) {
+                        //call addUser function with the necessary data
                         await updateUserDoc({
                             id: user?.uid,
                             name: userDetails.name,

@@ -1,21 +1,51 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../authentication/AuthContext";
-import { addTodo } from "../../firebase/todoFirebase";
-import { useNavigate } from "react-router-dom";
+import {
+    TodoObj,
+    addTodo,
+    fetchOneTodo,
+    updateTodoDoc
+} from "../../firebase/todoFirebase";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const AddTodo = () => {
+    const location = useLocation();
+    const isAddTodo = location.pathname === "/todos/addtodo";
+    const { id } = useParams();
+
     // State to manage the input values
-    const [todo, setTodo] = useState({
-        title: "",
-        desc: "",
-        date: ""
-    });
+    const [todo, setTodo] = useState<TodoObj | undefined | null>(
+        isAddTodo
+            ? {
+                  title: "",
+                  desc: "",
+                  date: ""
+              }
+            : null
+    );
 
     // React Router hook for navigation
     const navigate = useNavigate();
 
     // Accessing the user object from the AuthContext
     const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        // Fetch the todo data if the ID is provided
+        if (id) {
+            fetchOneTodo(id).then((todoData) => {
+                if (todoData != undefined) {
+                    setTodo({
+                        title: todoData.title,
+                        desc: todoData.desc,
+                        date: todoData.dueDate
+                    });
+                } else {
+                    setTodo(todoData);
+                }
+            });
+        }
+    }, [id]);
 
     // Handler for input changes
     const handleTodoInput = (
@@ -26,26 +56,53 @@ const AddTodo = () => {
         const name = e.target.name;
         const value = e.target.value;
 
-        setTodo((prev) => ({ ...prev, [name]: value }));
+        setTodo((prev) => {
+            if (prev) {
+                return { ...prev, [name]: value };
+            }
+        });
     };
 
     // Function to handle the form submission
     const onAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (user) {
-            // Call the addTodo function with the necessary data
-            await addTodo({
-                userId: user.uid,
-                title: todo.title,
-                desc: todo.desc,
-                date: todo.date
-            });
+            if (todo) {
+                if (isAddTodo) {
+                    // Call the addTodo function with the necessary data
+                    await addTodo({
+                        userId: user.uid,
+                        title: todo.title,
+                        desc: todo.desc,
+                        date: todo.date
+                    });
 
-            // Show success message and navigate to the home page
-            alert("Successfully added.");
-            navigate("/home");
+                    // Show success message and navigate to the home page
+                    alert("Successfully added.");
+                } else {
+                    if (id) {
+                        // Call the updateTodoDoc function with the necessary data
+                        await updateTodoDoc({
+                            id,
+                            title: todo.title,
+                            desc: todo.desc,
+                            date: todo.date
+                        });
+                    }
+                    alert("Successfully updated");
+                }
+                navigate("/home");
+            }
         }
     };
+
+    if (todo === undefined) {
+        return <h2>No todo list found</h2>;
+    }
+    console.log(todo);
+    if (todo === null) {
+        return <h2>Please wait while it loads</h2>;
+    }
 
     return (
         <div className="main-form-wrapper">
@@ -86,7 +143,7 @@ const AddTodo = () => {
                     />
 
                     <button type="submit" className="button">
-                        Add
+                        {isAddTodo ? "Add" : "Update"}
                     </button>
                 </form>
             </div>
