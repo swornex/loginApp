@@ -70,14 +70,18 @@ const Home = () => {
                                 <td>
                                     <Link
                                         to={`/todos/view/${list.id}`}
-                                        state={list}
                                         className="link"
                                     >
                                         View
                                     </Link>
                                 </td>
                                 <td>
-                                    <a href="#">edit</a>
+                                    <Link
+                                        to={`/todos/edit/${list.id}`}
+                                        className="link"
+                                    >
+                                        Edit
+                                    </Link>
                                 </td>
                                 <td>
                                     <button

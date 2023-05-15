@@ -104,6 +104,17 @@ function App() {
                                     </RequireAuth>
                                 }
                             />
+                            <Route
+                                path="edit/:id"
+                                element={
+                                    <RequireAuth>
+                                        <>
+                                            <Navigation />
+                                            <AddTodo />
+                                        </>
+                                    </RequireAuth>
+                                }
+                            />
                         </Route>
                         <Route path="/*" element={<Root />} />
                     </Routes>
