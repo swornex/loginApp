@@ -1,5 +1,13 @@
 // Import necessary modules and components
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import {
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    setDoc,
+    where
+} from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { Todo } from "../components/Home";
 
@@ -31,8 +39,22 @@ export const addTodo = async ({ userId, title, desc, date }: TodoObj) => {
 };
 
 // Function to fetch all todo documents
-export const getTodoDocs = async () => {
+export const getTodoDocs = async (userId: string) => {
     // Retrieve all todo documents from the "todos" collection
-    const res = await getDocs(collection(db, "todos"));
+
+    const reference = collection(db, "todos");
+    const q = query(reference, where("userId", "==", userId));
+
+    const res = await getDocs(q);
     return res.docs.map((doc) => doc.data()) as Todo[]; // Return the fetched documents
+};
+
+export const fetchOneTodo = async (id: string) => {
+    try {
+        const todoDoc = doc(db, "todos", id);
+        const res = (await getDoc(todoDoc)).data();
+        return res as Todo | undefined;
+    } catch (error) {
+        console.log(error.message);
+    }
 };

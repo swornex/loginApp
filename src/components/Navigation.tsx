@@ -8,15 +8,15 @@ const Navigation = () => {
     return (
         <div className="nav-wrapper">
             <div className="nav-container">
-                <a className="nav-link" href="/home">
+                <Link to="/home" className="nav-link">
                     Home
-                </a>
-                <a className="nav-link" href="/about">
+                </Link>
+                <Link to="/about" className="nav-link">
                     About
-                </a>
-                <a className="nav-link" href="/contact">
+                </Link>
+                <Link to="/contact" className="nav-link">
                     Contact
-                </a>
+                </Link>
             </div>
             <Link to="/profile">
                 <img

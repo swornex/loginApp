@@ -1,37 +1,40 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { fetchOneTodo } from "../../firebase/todoFirebase";
+import { Todo } from "../Home";
 
 const ViewTodo = () => {
-    const { state: list } = useLocation(); // Retrieve the state passed via the react-router location
-    const navigate = useNavigate(); // Access the navigation function provided by react-router
+    const { id } = useParams();
+    const [todo, setTodo] = useState<Todo | undefined | null>(null);
 
-    const handleDoneButton = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        navigate("/home"); // Navigate to the "/home" route when the "Done" button is clicked
-    };
+    useEffect(() => {
+        if (id) {
+            fetchOneTodo(id).then((todoData) => {
+                setTodo(todoData);
+            });
+        }
+    }, [id]);
+
+    if (todo === null) {
+        return <h1>Please wait while it loads</h1>;
+    }
+
+    if (todo === undefined) {
+        return <h1>Todo not found</h1>;
+    }
 
     return (
-        <>
-            <div className="box-wrapper">
-                <ul>
-                    <li>
-                        <h2>Title= {list.title}</h2>{" "}
-                        {/* Display the title of the todo */}
-                    </li>
-                    <li>Description = {list.desc}</li>{" "}
-                    {/* Display the description of the todo */}
-                    <li>Todo-Id = {list.id}</li>{" "}
-                    {/* Display the ID of the todo */}
-                    <li>User-Id = {list.userId}</li>{" "}
-                    {/* Display the user ID associated with the todo */}
-                    <li>Due Date = {list.dueDate}</li>{" "}
-                    {/* Display the due date of the todo */}
-                </ul>
-                <button className="button" onClick={handleDoneButton}>
-                    Done
-                </button>{" "}
-                {/* Button to mark the todo as done */}
-            </div>
-        </>
+        <div className="box-wrapper">
+            <ul>
+                <li>
+                    <h2>Title= {todo.title}</h2>
+                </li>
+                <li>Description = {todo.desc}</li>
+                <li>Todo-Id = {todo.id}</li>
+                <li>User-Id = {todo.userId}</li>
+                <li>Due Date = {todo.dueDate}</li>
+            </ul>
+        </div>
     );
 };
 
