@@ -99,7 +99,6 @@ const AddTodo = () => {
     if (todo === undefined) {
         return <h2>No todo list found</h2>;
     }
-    console.log(todo);
     if (todo === null) {
         return <h2>Please wait while it loads</h2>;
     }

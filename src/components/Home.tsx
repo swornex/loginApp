@@ -23,24 +23,28 @@ const Home = () => {
     };
 
     // Fetch todo documents from Firebase
-    const handleFetch = async () => {
-        if (!user) {
-            return; // If the user is not defined, exit the function
-        }
-        // Call the function getTodoDocs with the user's uid and wait for the result
-        const allTodoList = await getTodoDocs(user.uid);
 
-        // Update the lists state with the fetched data
-        setLists(allTodoList);
-    };
     useEffect(() => {
+        const handleFetch = async () => {
+            if (!user) {
+                return; // If the user is not defined, exit the function
+            }
+            // Call the function getTodoDocs with the user's uid and wait for the result
+            const allTodoList = await getTodoDocs(user.uid);
+
+            // Update the lists state with the fetched data
+            setLists(allTodoList);
+        };
         handleFetch(); // Fetch todo documents when the component mounts
-    }, []);
+    }, [user]);
 
     const handleDelete = async (id: string) => {
         await deleteTodoDoc(id);
-
-        handleFetch();
+        setLists(
+            lists.filter((list) => {
+                return id != list.id;
+            })
+        );
     };
 
     return (
