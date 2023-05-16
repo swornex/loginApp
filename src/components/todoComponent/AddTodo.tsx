@@ -24,6 +24,20 @@ const AddTodo = () => {
             : null
     );
 
+    //changing format of date
+    const date = () => {
+        const current_date = new Date();
+
+        const year = current_date.getFullYear();
+        let month = (current_date.getMonth() + 1).toString();
+        let day = current_date.getDate().toString();
+
+        if (current_date.getDate() < 10) day = "0" + day;
+        if (current_date.getMonth() + 1 < 10) month = "0" + month;
+
+        return year + "-" + month + "-" + day;
+    };
+
     // React Router hook for navigation
     const navigate = useNavigate();
 
@@ -132,8 +146,7 @@ const AddTodo = () => {
                     <input
                         type="date"
                         className="calender"
-                        min="2023-01-01"
-                        max="2025-12-31"
+                        min={date()}
                         name="date"
                         id="date"
                         value={todo.date}
