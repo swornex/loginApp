@@ -1,9 +1,9 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type Todo = {
     id: string;
@@ -15,7 +15,6 @@ export type Todo = {
 // Home component
 const Home = () => {
     const navigate = useNavigate();
-    const [lists, setLists] = useState<Todo[]>([]);
     const { user } = useContext(AuthContext);
     // Handle click event for the "Add Todo" button
     const handleTodoButton = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -24,7 +23,7 @@ const Home = () => {
     };
 
     // // Fetch todo documents from Firebase
-
+    const queryClient = useQueryClient();
     const { data, isLoading } = useQuery({
         queryKey: ["todos"],
         queryFn: () => {
@@ -32,14 +31,12 @@ const Home = () => {
         }
     });
 
-    const handleDelete = async (id: string) => {
-        await deleteTodoDoc(id);
-        setLists(
-            lists.filter((list) => {
-                return id != list.id;
-            })
-        );
-    };
+    const deleteMutation = useMutation({
+        mutationFn: deleteTodoDoc,
+        onSuccess: () => {
+            queryClient.invalidateQueries(["todos"]);
+        }
+    });
 
     if (isLoading) {
         return <h2>Please wait while it loads</h2>;
@@ -90,7 +87,7 @@ const Home = () => {
                                         className="delete-btn"
                                         type="button"
                                         onClick={() => {
-                                            handleDelete(list.id);
+                                            deleteMutation.mutate(list.id);
                                         }}
                                     >
                                         Delete
