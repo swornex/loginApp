@@ -32,9 +32,7 @@ const Home = () => {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: (id: string) => {
-            return deleteTodoDoc(id);
-        },
+        mutationFn: deleteTodoDoc,
         onSuccess: () => {
             queryClient.invalidateQueries(["todos"]);
         }
