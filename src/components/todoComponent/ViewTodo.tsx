@@ -1,25 +1,22 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchOneTodo } from "../../firebase/todoFirebase";
-import { Todo } from "../Home";
+import { useQuery } from "@tanstack/react-query";
 
 const ViewTodo = () => {
     const { id } = useParams();
-    const [todo, setTodo] = useState<Todo | undefined | null>(null);
 
-    useEffect(() => {
-        if (id) {
-            fetchOneTodo(id).then((todoData) => {
-                setTodo(todoData);
-            });
+    const { data, isLoading } = useQuery({
+        queryKey: ["todos", id],
+        queryFn: () => {
+            if (id) return fetchOneTodo(id);
         }
-    }, [id]);
+    });
 
-    if (todo === null) {
+    if (isLoading) {
         return <h1>Please wait while it loads</h1>;
     }
 
-    if (todo === undefined) {
+    if (data === undefined) {
         return <h1>Todo not found</h1>;
     }
 
@@ -27,12 +24,12 @@ const ViewTodo = () => {
         <div className="box-wrapper">
             <ul>
                 <li>
-                    <h2>Title= {todo.title}</h2>
+                    <h2>Title= {data.title}</h2>
                 </li>
-                <li>Description = {todo.desc}</li>
-                <li>Todo-Id = {todo.id}</li>
-                <li>User-Id = {todo.userId}</li>
-                <li>Due Date = {todo.dueDate}</li>
+                <li>Description = {data.desc}</li>
+                <li>Todo-Id = {data.id}</li>
+                <li>User-Id = {data.userId}</li>
+                <li>Due Date = {data.dueDate}</li>
             </ul>
         </div>
     );
