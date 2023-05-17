@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type Todo = {
     id: string;
@@ -22,21 +23,14 @@ const Home = () => {
         navigate("/todos/addtodo"); // Navigate to the "/todos/addtodo" route
     };
 
-    // Fetch todo documents from Firebase
+    // // Fetch todo documents from Firebase
 
-    useEffect(() => {
-        const handleFetch = async () => {
-            if (!user) {
-                return; // If the user is not defined, exit the function
-            }
-            // Call the function getTodoDocs with the user's uid and wait for the result
-            const allTodoList = await getTodoDocs(user.uid);
-
-            // Update the lists state with the fetched data
-            setLists(allTodoList);
-        };
-        handleFetch(); // Fetch todo documents when the component mounts
-    }, [user]);
+    const { data, isLoading } = useQuery({
+        queryKey: ["todos"],
+        queryFn: () => {
+            if (user) return getTodoDocs(user.uid);
+        }
+    });
 
     const handleDelete = async (id: string) => {
         await deleteTodoDoc(id);
@@ -46,6 +40,10 @@ const Home = () => {
             })
         );
     };
+
+    if (isLoading) {
+        return <h2>Please wait while it loads</h2>;
+    }
 
     return (
         <>
@@ -65,7 +63,7 @@ const Home = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {lists.map((list) => {
+                    {data?.map((list) => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
