@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import { signout } from "../firebase/userFirebase";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Navigation = () => {
+    const queryClient = useQueryClient();
+
     const handleSignOut = async () => {
         await signout();
+        queryClient.clear();
     };
     return (
         <div className="nav-wrapper">
