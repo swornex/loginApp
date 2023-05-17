@@ -7,6 +7,7 @@ import {
     updateTodoDoc
 } from "../../firebase/todoFirebase";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const AddTodo = () => {
     const location = useLocation();
@@ -77,14 +78,18 @@ const AddTodo = () => {
         });
     };
 
+    const addMutation = useMutation({
+        mutationFn: addTodo
+    });
+
     // Function to handle the form submission
     const onAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (user) {
             if (todo) {
                 if (isAddTodo) {
-                    // Call the addTodo function with the necessary data
-                    await addTodo({
+                    // mutate addTodo function with the necessary data
+                    addMutation.mutate({
                         userId: user.uid,
                         title: todo.title,
                         desc: todo.desc,
