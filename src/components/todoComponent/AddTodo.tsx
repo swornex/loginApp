@@ -7,6 +7,7 @@ import {
     updateTodoDoc
 } from "../../firebase/todoFirebase";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const AddTodo = () => {
     const location = useLocation();
@@ -77,14 +78,18 @@ const AddTodo = () => {
         });
     };
 
+    const addMutation = useMutation({
+        mutationFn: addTodo
+    });
+
     // Function to handle the form submission
     const onAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (user) {
             if (todo) {
                 if (isAddTodo) {
-                    // Call the addTodo function with the necessary data
-                    await addTodo({
+                    // mutate addTodo function with the necessary data
+                    addMutation.mutate({
                         userId: user.uid,
                         title: todo.title,
                         desc: todo.desc,
@@ -92,7 +97,7 @@ const AddTodo = () => {
                     });
 
                     // Show success message and navigate to the home page
-                    alert("Successfully added.");
+                    // alert("Successfully added.");
                 } else {
                     if (id) {
                         // Call the updateTodoDoc function with the necessary data
@@ -155,7 +160,11 @@ const AddTodo = () => {
                     />
 
                     <button type="submit" className="button">
-                        {isAddTodo ? "Add" : "Update"}
+                        {addMutation.isLoading
+                            ? "Loading"
+                            : isAddTodo
+                            ? "Add"
+                            : "Update"}
                     </button>
                 </form>
             </div>
