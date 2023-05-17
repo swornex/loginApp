@@ -97,7 +97,7 @@ const AddTodo = () => {
                     });
 
                     // Show success message and navigate to the home page
-                    alert("Successfully added.");
+                    // alert("Successfully added.");
                 } else {
                     if (id) {
                         // Call the updateTodoDoc function with the necessary data
@@ -160,7 +160,11 @@ const AddTodo = () => {
                     />
 
                     <button type="submit" className="button">
-                        {isAddTodo ? "Add" : "Update"}
+                        {addMutation.isLoading
+                            ? "Loading"
+                            : isAddTodo
+                            ? "Add"
+                            : "Update"}
                     </button>
                 </form>
             </div>
