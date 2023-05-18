@@ -1,21 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../authentication/AuthContext";
 import {
-    TodoObj,
+    CommonTodo,
     addTodo,
     fetchOneTodo,
     updateTodoDoc
 } from "../../firebase/todoFirebase";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const AddTodo = () => {
     const location = useLocation();
     const isAddTodo = location.pathname === "/todos/addtodo";
     const { id } = useParams();
-
+    const queryClient = useQueryClient();
     // State to manage the input values
-    const [todo, setTodo] = useState<TodoObj | undefined | null>(
+    const [todo, setTodo] = useState<CommonTodo | undefined | null>(
         isAddTodo
             ? {
                   title: "",
@@ -45,22 +45,26 @@ const AddTodo = () => {
     // Accessing the user object from the AuthContext
     const { user } = useContext(AuthContext);
 
+    //fetching data using specified id through fetchOneTodo function
+    const { data } = useQuery({
+        queryKey: ["todos", id],
+        queryFn: () => {
+            if (id) return fetchOneTodo(id);
+        }
+    });
+
+    //updating the todo based on fetched data
     useEffect(() => {
-        // Fetch the todo data if the ID is provided
-        if (id) {
-            fetchOneTodo(id).then((todoData) => {
-                if (todoData != undefined) {
-                    setTodo({
-                        title: todoData.title,
-                        desc: todoData.desc,
-                        date: todoData.dueDate
-                    });
-                } else {
-                    setTodo(todoData);
-                }
+        if (data === undefined) {
+            setTodo(data);
+        } else {
+            setTodo({
+                title: data.title,
+                desc: data.desc,
+                date: data.dueDate
             });
         }
-    }, [id]);
+    }, [data]);
 
     // Handler for input changes
     const handleTodoInput = (
@@ -82,6 +86,13 @@ const AddTodo = () => {
         mutationFn: addTodo
     });
 
+    const updateMutation = useMutation({
+        mutationFn: updateTodoDoc,
+        onSuccess: () => {
+            queryClient.invalidateQueries(["todos", "edit", id]);
+        }
+    });
+
     // Function to handle the form submission
     const onAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -97,11 +108,12 @@ const AddTodo = () => {
                     });
 
                     // Show success message and navigate to the home page
-                    // alert("Successfully added.");
+                    alert("Successfully added.");
                 } else {
                     if (id) {
-                        // Call the updateTodoDoc function with the necessary data
-                        await updateTodoDoc({
+                        //  Call the updateTodoDoc function with the necessary data
+
+                        updateMutation.mutate({
                             id,
                             title: todo.title,
                             desc: todo.desc,
@@ -160,7 +172,7 @@ const AddTodo = () => {
                     />
 
                     <button type="submit" className="button">
-                        {addMutation.isLoading
+                        {addMutation.isLoading || updateMutation.isLoading
                             ? "Loading"
                             : isAddTodo
                             ? "Add"
