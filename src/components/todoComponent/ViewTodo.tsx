@@ -7,9 +7,7 @@ const ViewTodo = () => {
 
     const { data, isLoading } = useQuery({
         queryKey: ["todos", id],
-        queryFn: () => {
-            if (id) return fetchOneTodo(id);
-        }
+        queryFn: () => fetchOneTodo(id)
     });
 
     if (isLoading) {
