@@ -52,19 +52,20 @@ const AddTodo = () => {
             if (id) return fetchOneTodo(id);
         }
     });
-
     //updating the todo based on fetched data
     useEffect(() => {
-        if (data === undefined) {
-            setTodo(data);
-        } else {
-            setTodo({
-                title: data.title,
-                desc: data.desc,
-                date: data.dueDate
-            });
+        if (id) {
+            if (data === undefined) {
+                setTodo(data);
+            } else {
+                setTodo({
+                    title: data.title,
+                    desc: data.desc,
+                    date: data.dueDate
+                });
+            }
         }
-    }, [data]);
+    }, [data, id]);
 
     // Handler for input changes
     const handleTodoInput = (

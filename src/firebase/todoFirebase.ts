@@ -58,14 +58,20 @@ export const getTodoDocs = async (userId: string) => {
 };
 
 // Function to fetch a single todo document by ID
-export const fetchOneTodo = async (id: string) => {
+export const fetchOneTodo = async (id?: string) => {
+    if (!id) {
+        return undefined;
+    }
+
     try {
         const todoDoc = doc(db, "todos", id);
+
         const res = (await getDoc(todoDoc)).data();
 
-        return res as Todo | undefined; // Return the fetched todo document
+        return res as Todo | null; // Return the fetched todo document
     } catch (error) {
         console.log(error.message);
+        return error.message;
     }
 };
 
