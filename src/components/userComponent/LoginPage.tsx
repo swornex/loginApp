@@ -3,18 +3,21 @@ import { login } from "../../firebase/userFirebase";
 
 import { Link } from "react-router-dom";
 import userImage from "../../assets/images/userImage.png";
+import { loginSchema, LoginDetails } from "../../schema/loginSchema";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const { register, handleSubmit } = useForm<LoginDetails>({
+        resolver: zodResolver(loginSchema)
+    });
 
+    const onLogin: SubmitHandler<LoginDetails> = async (data) => {
         try {
             setIsLoading(true);
-            await login(email, password);
+            await login(data.email, data.password);
         } catch (error) {
             alert("Incorrect user email or password");
         } finally {
@@ -28,24 +31,22 @@ const LoginPage = () => {
                 <img className="image" src={userImage} />
 
                 <div className="form-wrapper">
-                    <form onSubmit={onLogin} className="form">
+                    <form onSubmit={handleSubmit(onLogin)} className="form">
                         <label htmlFor="email">Email:</label>
 
                         <input
                             type="text"
-                            name="email"
+                            {...register("email")}
                             id="email"
                             placeholder="abcd@gmail.com"
-                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <br />
                         <label htmlFor="password">Password:</label>
                         <input
                             type="password"
-                            name="password"
+                            {...register("password")}
                             id="password"
                             placeholder="password"
-                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <br />
                         <button className="button" disabled={isLoading}>
