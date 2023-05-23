@@ -191,7 +191,10 @@ const UserDetails = () => {
                                 onChange={handleUserInput}
                                 required
                             />
-                            <button className="button" disabled={isLoading}>
+                            <button
+                                className="btn-margin button"
+                                disabled={isLoading}
+                            >
                                 {isLoading
                                     ? "Loading..."
                                     : isSignUp

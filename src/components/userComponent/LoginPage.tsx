@@ -10,7 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
-    const { register, handleSubmit } = useForm<LoginDetails>({
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<LoginDetails>({
         resolver: zodResolver(loginSchema)
     });
 
@@ -32,24 +36,35 @@ const LoginPage = () => {
 
                 <div className="form-wrapper">
                     <form onSubmit={handleSubmit(onLogin)} className="form">
-                        <label htmlFor="email">Email:</label>
+                        <div className="text-field">
+                            <label htmlFor="email">Email:</label>
 
-                        <input
-                            type="text"
-                            {...register("email")}
-                            id="email"
-                            placeholder="abcd@gmail.com"
-                        />
-                        <br />
-                        <label htmlFor="password">Password:</label>
-                        <input
-                            type="password"
-                            {...register("password")}
-                            id="password"
-                            placeholder="password"
-                        />
-                        <br />
-                        <button className="button" disabled={isLoading}>
+                            <input
+                                type="text"
+                                {...register("email")}
+                                id="email"
+                                placeholder="abcd@gmail.com"
+                            />
+                            {errors.email && (
+                                <span>{errors.email.message}</span>
+                            )}
+                        </div>
+                        <div className="text-field">
+                            <label htmlFor="password">Password:</label>
+                            <input
+                                type="password"
+                                {...register("password")}
+                                id="password"
+                                placeholder="password"
+                            />
+                            {errors.password && (
+                                <span>{errors.password.message}</span>
+                            )}
+                        </div>
+                        <button
+                            className="btn-margin button"
+                            disabled={isLoading}
+                        >
                             {isLoading ? "Loading..." : "Login"}
                         </button>
                     </form>
