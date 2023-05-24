@@ -17,4 +17,18 @@ export const userSchema = userAddSchema.partial({
     password: true
 });
 
+const userUpdateSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    contact: z.string(),
+    address: z.string()
+});
+
+const userDatabaseSchema = userUpdateSchema.extend({
+    email: z.string().email()
+});
+
+export type userDatabaseType = z.infer<typeof userDatabaseSchema>;
+export type userUpdateType = z.infer<typeof userUpdateSchema>;
+
 export type UserAddType = z.infer<typeof userSchema>;
