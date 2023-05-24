@@ -9,14 +9,8 @@ import {
 // Import auth and db instances from the Firebase configuration file
 import { auth, db } from "./firebaseConfig";
 
-// Define a TypeScript interface/type for the user object
-type UserObj = {
-    id: string;
-    name: string;
-    email?: string;
-    contact: string;
-    address: string;
-};
+// importing interface/type for the user object using zod
+import { userDatabaseType, userUpdateType } from "../schema/userSchema";
 
 // Function to log in the user using Firebase Auth
 export const login = async (email: string, password: string) => {
@@ -40,7 +34,7 @@ export const addUser = async ({
     email,
     contact,
     address
-}: UserObj) => {
+}: userDatabaseType) => {
     try {
         // Set the document data for the specified user ID in the "users" collection
         await setDoc(doc(db, "users", id), {
@@ -81,7 +75,7 @@ export const updateUserDoc = async ({
     name,
     contact,
     address
-}: UserObj) => {
+}: userUpdateType) => {
     try {
         // Update the specified fields in the user document in the "users" collection
         await updateDoc(doc(db, "users", id), {
