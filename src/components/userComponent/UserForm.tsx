@@ -3,36 +3,28 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     addUser,
     fetchOne,
-    register,
+    signUp,
     updateUserDoc
 } from "../../firebase/userFirebase";
 import userImage from "../../assets/images/userImage.png";
 
 import { AuthContext } from "../../authentication/AuthContext";
-
-type UserDetailsType = {
-    name: string;
-    email: string;
-    password?: string;
-    number: string;
-    address: string;
-};
+import { userSchema, UserAddType } from "../../schema/userSchema";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const UserDetails = () => {
     const location = useLocation();
     const isSignUp = location.pathname === "/signup";
 
-    const [userDetails, setUserDetails] = useState<UserDetailsType | null>(
-        isSignUp
-            ? {
-                  name: "",
-                  email: "",
-                  password: "",
-                  number: "",
-                  address: ""
-              }
-            : null
-    );
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue
+    } = useForm<UserAddType>({
+        resolver: zodResolver(userSchema)
+    });
 
     const { user } = useContext(AuthContext);
 
@@ -41,64 +33,48 @@ const UserDetails = () => {
             fetchOne(user.uid)
                 .then((userData) => {
                     if (userData != undefined) {
-                        setUserDetails({
-                            name: userData.name,
-                            email: userData.email,
-                            number: userData.number,
-                            address: userData.address
-                        });
+                        const fields = [
+                            "name",
+                            "email",
+                            "contact",
+                            "address"
+                        ] as const;
+                        fields.forEach((field) =>
+                            setValue(field, userData[field])
+                        );
                     }
                 })
                 .catch((error) => {
                     console.log(error.message);
                 });
         }
-    }, [user, location.pathname]);
+    }, [user, location.pathname, setValue]);
 
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.name;
-        const value = e.target.value;
-
-        if (userDetails != null) {
-            setUserDetails((prev) => {
-                if (prev) {
-                    return { ...prev, [name]: value };
-                }
-                return null;
-            });
-        }
-    };
-
-    const onRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if (userDetails != null) {
+    const onRegister: SubmitHandler<UserAddType> = async (data) => {
+        if (data != null) {
             try {
                 setIsLoading(true);
 
                 if (isSignUp) {
-                    if (!userDetails.password) {
+                    if (!data.password) {
                         alert("Please provide password");
                         return;
                     }
 
                     //register new user from the given email and password
-                    const newUser = await register(
-                        userDetails.email,
-                        userDetails.password
-                    );
+                    const newUser = await signUp(data.email, data.password);
 
                     //call addUser function with the necessary data
                     await addUser({
                         id: newUser.user.uid,
-                        name: userDetails.name,
-                        email: userDetails.email,
-                        number: userDetails.number,
-                        address: userDetails.address
+                        name: data.name,
+                        email: data.email,
+                        contact: data.contact,
+                        address: data.address
                     });
                     alert("Successfully Signed up.");
                 } else {
@@ -106,9 +82,9 @@ const UserDetails = () => {
                         //call addUser function with the necessary data
                         await updateUserDoc({
                             id: user?.uid,
-                            name: userDetails.name,
-                            number: userDetails.number,
-                            address: userDetails.address
+                            name: data.name,
+                            contact: data.contact,
+                            address: data.address
                         });
                         alert("Successfully updated.");
                         navigate("/home");
@@ -122,103 +98,100 @@ const UserDetails = () => {
         }
     };
 
-    if (userDetails) {
-        return (
-            <>
-                <div className="main-form-wrapper">
-                    {isSignUp ? (
-                        <img className="image" src={userImage} />
-                    ) : (
-                        <img className="image" src={userImage} />
-                    )}
+    return (
+        <>
+            <div className="main-form-wrapper">
+                <img className="image" src={userImage} />
 
-                    <div className="form-wrapper">
-                        <form onSubmit={onRegister} className="form">
+                <div className="form-wrapper">
+                    <form onSubmit={handleSubmit(onRegister)} className="form">
+                        <div className="text-field">
                             <label htmlFor="name">Name:</label>
                             <input
                                 type="text"
-                                name="name"
+                                {...register("name")}
                                 id="name"
                                 placeholder="ram"
-                                value={userDetails.name}
-                                onChange={handleUserInput}
-                                required
                             />
+                            {errors.name && <span>{errors.name.message}</span>}
+                        </div>
+                        <div className="text-field">
                             <label htmlFor="email">Email:</label>
-
                             <input
                                 type="email"
-                                name="email"
+                                {...register("email")}
                                 id="email"
                                 placeholder="abcd@gmail.com"
-                                value={userDetails.email}
-                                onChange={handleUserInput}
-                                required
                                 disabled={location.pathname === "/profile"}
                             />
-                            {isSignUp && (
-                                <>
-                                    <label htmlFor="password">Password:</label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        id="password"
-                                        placeholder="password"
-                                        value={userDetails.password}
-                                        onChange={handleUserInput}
-                                        required
-                                    />
-                                </>
+                            {errors.email && (
+                                <span>{errors.email.message}</span>
                             )}
-
-                            <label htmlFor="number">Number:</label>
+                        </div>
+                        {isSignUp && (
+                            <div className="text-field">
+                                <label htmlFor="password">Password:</label>
+                                <input
+                                    type="password"
+                                    {...register("password")}
+                                    id="password"
+                                    placeholder="password"
+                                />
+                                {errors.password && (
+                                    <span>{errors.password.message}</span>
+                                )}
+                            </div>
+                        )}
+                        <div className="text-field">
+                            <label htmlFor="number">Contact:</label>
                             <input
                                 type="text"
-                                name="number"
+                                {...register("contact")}
                                 id="number"
                                 placeholder="9841000000"
-                                value={userDetails.number}
-                                onChange={handleUserInput}
-                                required
                             />
+                            {errors.contact && (
+                                <span>{errors.contact.message}</span>
+                            )}
+                        </div>
+                        <div className="text-field">
                             <label htmlFor="address">Address:</label>
                             <input
                                 type="text"
-                                name="address"
+                                {...register("address")}
                                 id="address"
                                 placeholder="Kathmandu"
-                                value={userDetails.address}
-                                onChange={handleUserInput}
-                                required
                             />
-                            <button
-                                className="btn-margin button"
-                                disabled={isLoading}
-                            >
-                                {isLoading
-                                    ? "Loading..."
-                                    : isSignUp
-                                    ? "Sign Up"
-                                    : "Update"}
-                            </button>
-                        </form>
-                        {isSignUp && (
-                            <>
-                                <h5>Already have an account?</h5>
-                                <hr />
-                                <h5>
-                                    <Link to="/login" className="login">
-                                        Login
-                                    </Link>
-                                </h5>
-                            </>
-                        )}
-                    </div>
+                            {errors.address && (
+                                <span>{errors.address.message}</span>
+                            )}
+                        </div>
+                        <button
+                            className="btn-margin button"
+                            disabled={isLoading}
+                        >
+                            {isLoading
+                                ? "Loading..."
+                                : isSignUp
+                                ? "Sign Up"
+                                : "Update"}
+                        </button>
+                    </form>
+                    {isSignUp && (
+                        <>
+                            <h5>Already have an account?</h5>
+                            <hr />
+                            <h5>
+                                <Link to="/login" className="login">
+                                    Login
+                                </Link>
+                            </h5>
+                        </>
+                    )}
                 </div>
-            </>
-        );
-    }
-    return null;
+            </div>
+        </>
+    );
 };
 
 export default UserDetails;

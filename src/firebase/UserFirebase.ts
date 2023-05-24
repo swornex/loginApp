@@ -14,7 +14,7 @@ type UserObj = {
     id: string;
     name: string;
     email?: string;
-    number: string;
+    contact: string;
     address: string;
 };
 
@@ -29,7 +29,7 @@ export const signout = async () => {
 };
 
 // Function to register a new user using Firebase Auth
-export const register = async (email: string, password: string) => {
+export const signUp = async (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password);
 };
 
@@ -38,7 +38,7 @@ export const addUser = async ({
     id,
     name,
     email,
-    number,
+    contact,
     address
 }: UserObj) => {
     try {
@@ -47,7 +47,7 @@ export const addUser = async ({
             id,
             name,
             email,
-            number,
+            contact,
             address
         });
     } catch (error) {
@@ -76,12 +76,17 @@ export const fetchOne = async (id: string) => {
 };
 
 // Function to update a user document in the Firestore database
-export const updateUserDoc = async ({ id, name, number, address }: UserObj) => {
+export const updateUserDoc = async ({
+    id,
+    name,
+    contact,
+    address
+}: UserObj) => {
     try {
         // Update the specified fields in the user document in the "users" collection
         await updateDoc(doc(db, "users", id), {
             name,
-            number,
+            contact,
             address
         });
     } catch (error) {
