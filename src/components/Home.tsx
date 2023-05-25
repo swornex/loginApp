@@ -9,7 +9,7 @@ export type Todo = {
     id: string;
     userId: string;
     title: string;
-    desc: string;
+    description: string;
     dueDate: string;
 };
 // Home component
@@ -64,7 +64,7 @@ const Home = () => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
-                                <td>{list.desc}</td>
+                                <td>{list.description}</td>
                                 <td>{list.dueDate}</td>
                                 <td>
                                     <Link

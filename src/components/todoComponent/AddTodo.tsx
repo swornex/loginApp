@@ -1,29 +1,35 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../authentication/AuthContext";
 import {
-    CommonTodo,
     addTodo,
     fetchOneTodo,
     updateTodoDoc
 } from "../../firebase/todoFirebase";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { commonTodoSchema, CommonTodoType } from "../../schema/todoSchema";
 
 const AddTodo = () => {
     const location = useLocation();
     const isAddTodo = location.pathname === "/todos/addtodo";
     const { id } = useParams();
     const queryClient = useQueryClient();
-    // State to manage the input values
-    const [todo, setTodo] = useState<CommonTodo | undefined | null>(
-        isAddTodo
-            ? {
-                  title: "",
-                  desc: "",
-                  date: ""
-              }
-            : null
-    );
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue
+    } = useForm<CommonTodoType>({
+        resolver: zodResolver(commonTodoSchema),
+        defaultValues: {
+            title: "",
+            description: "",
+            dueDate: ""
+        }
+    });
 
     //changing format of date
     const date = () => {
@@ -56,32 +62,15 @@ const AddTodo = () => {
     useEffect(() => {
         if (id) {
             if (data === undefined) {
-                setTodo(data);
+                setValue(data, data);
             } else {
-                setTodo({
-                    title: data.title,
-                    desc: data.desc,
-                    date: data.dueDate
+                const fields = ["title", "description", "dueDate"] as const;
+                fields.forEach((field) => {
+                    setValue(field, data[field]);
                 });
             }
         }
-    }, [data, id]);
-
-    // Handler for input changes
-    const handleTodoInput = (
-        e:
-            | React.ChangeEvent<HTMLInputElement>
-            | React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
-        const name = e.target.name;
-        const value = e.target.value;
-
-        setTodo((prev) => {
-            if (prev) {
-                return { ...prev, [name]: value };
-            }
-        });
-    };
+    }, [data, id, setValue]);
 
     const addMutation = useMutation({
         mutationFn: addTodo
@@ -90,22 +79,19 @@ const AddTodo = () => {
     const updateMutation = useMutation({
         mutationFn: updateTodoDoc,
         onSuccess: () => {
-            queryClient.invalidateQueries(["todos", "edit", id]);
+            queryClient.invalidateQueries(["todos", id]);
         }
     });
 
-    // Function to handle the form submission
-    const onAdd = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const onAdd: SubmitHandler<CommonTodoType> = async (data) => {
         if (user) {
-            if (todo) {
+            if (data) {
                 if (isAddTodo) {
-                    // mutate addTodo function with the necessary data
                     addMutation.mutate({
                         userId: user.uid,
-                        title: todo.title,
-                        desc: todo.desc,
-                        date: todo.date
+                        title: data.title,
+                        description: data.description,
+                        dueDate: data.dueDate
                     });
 
                     // Show success message and navigate to the home page
@@ -116,9 +102,9 @@ const AddTodo = () => {
 
                         updateMutation.mutate({
                             id,
-                            title: todo.title,
-                            desc: todo.desc,
-                            date: todo.date
+                            title: data.title,
+                            description: data.description,
+                            dueDate: data.dueDate
                         });
                     }
                     alert("Successfully updated");
@@ -128,51 +114,53 @@ const AddTodo = () => {
         }
     };
 
-    if (todo === undefined) {
+    if (id && data === undefined) {
         return <h2>No todo list found</h2>;
     }
-    if (todo === null) {
+
+    if (data === null) {
         return <h2>Please wait while it loads</h2>;
     }
 
     return (
         <div className="main-form-wrapper">
             <div className="form-wrapper">
-                <form className="form" onSubmit={onAdd}>
-                    <label htmlFor="title">Title: </label>
-                    <input
-                        type="text"
-                        placeholder="todo title"
-                        name="title"
-                        id="title"
-                        value={todo.title}
-                        onChange={handleTodoInput}
-                        required
-                    />
-
-                    <label htmlFor="desc">Description:</label>
-                    <textarea
-                        placeholder="deep description on titled todo"
-                        name="desc"
-                        id="desc"
-                        value={todo.desc}
-                        onChange={handleTodoInput}
-                        required
-                    ></textarea>
-
-                    <label htmlFor="date">Date</label>
-                    <input
-                        type="date"
-                        className="calender"
-                        min={date()}
-                        name="date"
-                        id="date"
-                        value={todo.date}
-                        onChange={handleTodoInput}
-                        required
-                    />
-
-                    <button type="submit" className="button">
+                <form className="form" onSubmit={handleSubmit(onAdd)}>
+                    <div className="text-field">
+                        <label htmlFor="title">Title: </label>
+                        <input
+                            type="text"
+                            placeholder="todo title"
+                            {...register("title")}
+                            id="title"
+                        />
+                        {errors.title && <span>{errors.title.message}</span>}
+                    </div>
+                    <div className="text-field">
+                        <label htmlFor="description">Description:</label>
+                        <textarea
+                            placeholder="deep description on titled todo"
+                            {...register("description")}
+                            id="description"
+                        ></textarea>
+                        {errors.description && (
+                            <span>{errors.description.message}</span>
+                        )}
+                    </div>
+                    <div className="text-field">
+                        <label htmlFor="date">Date</label>
+                        <input
+                            type="date"
+                            className="calender"
+                            min={date()}
+                            {...register("dueDate", { required: true })}
+                            id="date"
+                        />
+                        {errors.dueDate && (
+                            <span>{errors.dueDate.message}</span>
+                        )}
+                    </div>
+                    <button type="submit" className="button btn-margin">
                         {addMutation.isLoading || updateMutation.isLoading
                             ? "Loading"
                             : isAddTodo
