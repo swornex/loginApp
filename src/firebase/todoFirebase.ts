@@ -14,22 +14,16 @@ import { db } from "./firebaseConfig";
 import { Todo } from "../components/Home";
 
 // Type for todo object
-export interface CommonTodo {
-    title: string;
-    desc: string;
-    date: string;
-}
 
-interface AddTodoType extends CommonTodo {
-    userId: string;
-}
-
-interface DatabaseTodoType extends CommonTodo {
-    id: string;
-}
+import { AddTodoType, TodoDatabaseType } from "../schema/todoSchema";
 
 // Function to add a new todo document
-export const addTodo = async ({ userId, title, desc, date }: AddTodoType) => {
+export const addTodo = async ({
+    userId,
+    title,
+    description,
+    dueDate
+}: AddTodoType) => {
     try {
         // Generate a new unique ID for the todo document
         const id = doc(collection(db, "todos")).id;
@@ -39,8 +33,8 @@ export const addTodo = async ({ userId, title, desc, date }: AddTodoType) => {
             id,
             userId,
             title,
-            desc,
-            dueDate: date
+            description,
+            dueDate
         });
     } catch (error) {
         console.log(error.message);
@@ -79,15 +73,15 @@ export const fetchOneTodo = async (id?: string) => {
 export const updateTodoDoc = async ({
     id,
     title,
-    desc,
-    date
-}: DatabaseTodoType) => {
+    description,
+    dueDate
+}: TodoDatabaseType) => {
     try {
         // Update the specified todo document with the provided data
         await updateDoc(doc(db, "todos", id), {
             title,
-            desc,
-            dueDate: date
+            description,
+            dueDate
         });
     } catch (error) {
         console.log(error.message);

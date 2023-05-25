@@ -24,7 +24,7 @@ const ViewTodo = () => {
                 <li>
                     <h2>Title= {data.title}</h2>
                 </li>
-                <li>Description = {data.desc}</li>
+                <li>Description = {data.description}</li>
                 <li>Todo-Id = {data.id}</li>
                 <li>User-Id = {data.userId}</li>
                 <li>Due Date = {data.dueDate}</li>
