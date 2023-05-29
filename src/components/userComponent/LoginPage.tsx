@@ -3,6 +3,7 @@ import { login } from "../../firebase/userFirebase";
 
 import { Link } from "react-router-dom";
 import userImage from "../../assets/images/userImage.png";
+import vectorImg from "../../assets/images/login-signup.png";
 import { loginSchema, LoginDetails } from "../../schema/loginSchema";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,51 +32,59 @@ const LoginPage = () => {
 
     return (
         <>
-            <div className="main-form-wrapper">
-                <img className="image" src={userImage} />
+            <div className="card">
+                <div className="w-80 m-9">
+                    <img className="w-28 mb-2 mx-auto" src={userImage} />
 
-                <div className="form-wrapper">
-                    <form onSubmit={handleSubmit(onLogin)} className="form">
-                        <div className="text-field">
-                            <label htmlFor="email">Email:</label>
-
-                            <input
-                                type="text"
-                                {...register("email")}
-                                id="email"
-                                placeholder="abcd@gmail.com"
-                            />
-                            {errors.email && (
-                                <span>{errors.email.message}</span>
-                            )}
-                        </div>
-                        <div className="text-field">
-                            <label htmlFor="password">Password:</label>
-                            <input
-                                type="password"
-                                {...register("password")}
-                                id="password"
-                                placeholder="password"
-                            />
-                            {errors.password && (
-                                <span>{errors.password.message}</span>
-                            )}
-                        </div>
-                        <button
-                            className="btn-margin button"
-                            disabled={isLoading}
+                    <div className="m-auto w-60">
+                        <form
+                            onSubmit={handleSubmit(onLogin)}
+                            className="py-2.5"
                         >
-                            {isLoading ? "Loading..." : "Login"}
-                        </button>
-                    </form>
-                    <h5>New account?</h5>
-                    <hr />
-                    <h5>
-                        <Link to="/signup" className="sign-up">
-                            Signup
-                        </Link>
-                    </h5>
+                            <div className="text-field">
+                                <label htmlFor="email">Email:</label>
+
+                                <input
+                                    type="text"
+                                    {...register("email")}
+                                    id="email"
+                                    placeholder="abcd@gmail.com"
+                                />
+                                {errors.email && (
+                                    <span>{errors.email.message}</span>
+                                )}
+                            </div>
+                            <div className="text-field">
+                                <label className="label-m" htmlFor="password">
+                                    Password:
+                                </label>
+                                <input
+                                    type="password"
+                                    {...register("password")}
+                                    id="password"
+                                    placeholder="password"
+                                />
+                                {errors.password && (
+                                    <span>{errors.password.message}</span>
+                                )}
+                            </div>
+                            <button disabled={isLoading}>
+                                {isLoading ? "Loading..." : "Login"}
+                            </button>
+                        </form>
+                        <hr />
+                        <h5>
+                            New User?
+                            <Link
+                                to="/signup"
+                                className="px-2 decoration-0 italic font-semibold hover:underline"
+                            >
+                                Signup
+                            </Link>
+                        </h5>
+                    </div>
                 </div>
+                <img className="w-96 my-auto" src={vectorImg} />
             </div>
         </>
     );
