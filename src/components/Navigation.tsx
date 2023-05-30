@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { signout } from "../firebase/userFirebase";
 import { useQueryClient } from "@tanstack/react-query";
+import profile from "../assets/images/profile.png";
 
 const Navigation = () => {
     const queryClient = useQueryClient();
@@ -10,8 +11,8 @@ const Navigation = () => {
         queryClient.clear();
     };
     return (
-        <div className="nav-wrapper">
-            <div className="nav-container">
+        <div className="flex items-center bg-nightRider-500">
+            <div className="flex space-x-4 items-center ml-28 w-full">
                 <Link to="/home" className="nav-link">
                     Home
                 </Link>
@@ -23,13 +24,10 @@ const Navigation = () => {
                 </Link>
             </div>
             <Link to="/profile">
-                <img
-                    className="image"
-                    src="https://cdn.onlinewebfonts.com/svg/img_568656.png"
-                />
+                <img className="w-14 cursor-pointer" src={profile} />
             </Link>
             <div>
-                <button className="button" onClick={handleSignOut}>
+                <button className="button-m" onClick={handleSignOut}>
                     Signout
                 </button>
             </div>

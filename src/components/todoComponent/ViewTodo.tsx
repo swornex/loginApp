@@ -19,15 +19,13 @@ const ViewTodo = () => {
     }
 
     return (
-        <div className="box-wrapper">
-            <ul>
-                <li>
-                    <h2>Title= {data.title}</h2>
-                </li>
-                <li>Description = {data.description}</li>
-                <li>Todo-Id = {data.id}</li>
-                <li>User-Id = {data.userId}</li>
-                <li>Due Date = {data.dueDate}</li>
+        <div className="w-2/4 bg-nightRider-500 mx-auto my-32 text-justify">
+            <ul className="list-none">
+                <li className="p-1 pb-3 text-3xl">Title= {data.title}</li>
+                <li className="p-1">Description = {data.description}</li>
+                <li className="p-1">Todo-Id = {data.id}</li>
+                <li className="p-1">User-Id = {data.userId}</li>
+                <li className="p-1">Due Date = {data.dueDate}</li>
             </ul>
         </div>
     );

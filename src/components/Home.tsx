@@ -45,14 +45,18 @@ const Home = () => {
     return (
         <>
             <h1>Welcome to home page</h1>
-            <button className="button" type="button" onClick={handleTodoButton}>
+            <button
+                className="py-1 px-5 rounded block text-neutral-200 hover:bg-nightRider-500 button-m"
+                type="button"
+                onClick={handleTodoButton}
+            >
                 Add Todo
             </button>
-            <table>
+            <table className="w-11/12 mx-auto">
                 <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Description</th>
+                        <th className="w-3/5">Description</th>
                         <th>Due date</th>
                         <th>View</th>
                         <th>Edit</th>
@@ -69,7 +73,7 @@ const Home = () => {
                                 <td>
                                     <Link
                                         to={`/todos/view/${list.id}`}
-                                        className="link"
+                                        className="decoration-0 text-neutral-200 text-base"
                                     >
                                         View
                                     </Link>
@@ -77,14 +81,13 @@ const Home = () => {
                                 <td>
                                     <Link
                                         to={`/todos/edit/${list.id}`}
-                                        className="link"
+                                        className="decoration-0 text-neutral-200 text-base"
                                     >
                                         Edit
                                     </Link>
                                 </td>
                                 <td>
                                     <button
-                                        className="delete-btn"
                                         type="button"
                                         onClick={() => {
                                             deleteMutation.mutate(list.id);

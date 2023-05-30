@@ -6,12 +6,13 @@ import {
     signUp,
     updateUserDoc
 } from "../../firebase/userFirebase";
-import userImage from "../../assets/images/userImage.png";
 
 import { AuthContext } from "../../authentication/AuthContext";
 import { userSchema, UserAddType } from "../../schema/userSchema";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import vectorImg from "../../assets/images/login-signup.png";
+import userImage from "../../assets/images/userImage.png";
 
 const UserDetails = () => {
     const location = useLocation();
@@ -100,95 +101,114 @@ const UserDetails = () => {
 
     return (
         <>
-            <div className="main-form-wrapper">
-                <img className="image" src={userImage} />
+            <div className="card">
+                <div className="w-80 m-9">
+                    <img className="w-28 mb-2 mx-auto" src={userImage} />
 
-                <div className="form-wrapper">
-                    <form onSubmit={handleSubmit(onRegister)} className="form">
-                        <div className="text-field">
-                            <label htmlFor="name">Name:</label>
-                            <input
-                                type="text"
-                                {...register("name")}
-                                id="name"
-                                placeholder="ram"
-                            />
-                            {errors.name && <span>{errors.name.message}</span>}
-                        </div>
-                        <div className="text-field">
-                            <label htmlFor="email">Email:</label>
-                            <input
-                                type="email"
-                                {...register("email")}
-                                id="email"
-                                placeholder="abcd@gmail.com"
-                                disabled={location.pathname === "/profile"}
-                            />
-                            {errors.email && (
-                                <span>{errors.email.message}</span>
-                            )}
-                        </div>
-                        {isSignUp && (
+                    <div className="m-auto w-60">
+                        <form
+                            onSubmit={handleSubmit(onRegister)}
+                            className="py-2.5"
+                        >
                             <div className="text-field">
-                                <label htmlFor="password">Password:</label>
+                                <label htmlFor="name">Name:</label>
                                 <input
-                                    type="password"
-                                    {...register("password")}
-                                    id="password"
-                                    placeholder="password"
+                                    type="text"
+                                    {...register("name")}
+                                    id="name"
+                                    placeholder="ram"
                                 />
-                                {errors.password && (
-                                    <span>{errors.password.message}</span>
+                                {errors.name && (
+                                    <span>{errors.name.message}</span>
                                 )}
                             </div>
+                            <div className="text-field">
+                                <label className="label-m" htmlFor="email">
+                                    Email:
+                                </label>
+                                <input
+                                    type="email"
+                                    {...register("email")}
+                                    id="email"
+                                    placeholder="abcd@gmail.com"
+                                    disabled={location.pathname === "/profile"}
+                                />
+                                {errors.email && (
+                                    <span>{errors.email.message}</span>
+                                )}
+                            </div>
+                            {isSignUp && (
+                                <div className="text-field">
+                                    <label
+                                        className="label-m"
+                                        htmlFor="password"
+                                    >
+                                        Password:
+                                    </label>
+                                    <input
+                                        type="password"
+                                        {...register("password")}
+                                        id="password"
+                                        placeholder="password"
+                                    />
+                                    {errors.password && (
+                                        <span>{errors.password.message}</span>
+                                    )}
+                                </div>
+                            )}
+                            <div className="text-field">
+                                <label className="label-m" htmlFor="number">
+                                    Contact:
+                                </label>
+                                <input
+                                    type="text"
+                                    {...register("contact")}
+                                    id="number"
+                                    placeholder="9841000000"
+                                />
+                                {errors.contact && (
+                                    <span>{errors.contact.message}</span>
+                                )}
+                            </div>
+                            <div className="text-field">
+                                <label className="label-m" htmlFor="address">
+                                    Address:
+                                </label>
+                                <input
+                                    type="text"
+                                    {...register("address")}
+                                    id="address"
+                                    placeholder="Kathmandu"
+                                />
+                                {errors.address && (
+                                    <span>{errors.address.message}</span>
+                                )}
+                            </div>
+                            <button disabled={isLoading}>
+                                {isLoading
+                                    ? "Loading..."
+                                    : isSignUp
+                                    ? "Sign Up"
+                                    : "Update"}
+                            </button>
+                        </form>
+                        {isSignUp && (
+                            <>
+                                <hr />
+                                <h5>
+                                    Old User?
+                                    <Link
+                                        to="/login"
+                                        className="px-2 decoration-0 italic font-semibold hover:underline"
+                                    >
+                                        Login
+                                    </Link>
+                                </h5>
+                            </>
                         )}
-                        <div className="text-field">
-                            <label htmlFor="number">Contact:</label>
-                            <input
-                                type="text"
-                                {...register("contact")}
-                                id="number"
-                                placeholder="9841000000"
-                            />
-                            {errors.contact && (
-                                <span>{errors.contact.message}</span>
-                            )}
-                        </div>
-                        <div className="text-field">
-                            <label htmlFor="address">Address:</label>
-                            <input
-                                type="text"
-                                {...register("address")}
-                                id="address"
-                                placeholder="Kathmandu"
-                            />
-                            {errors.address && (
-                                <span>{errors.address.message}</span>
-                            )}
-                        </div>
-                        <button
-                            className="btn-margin button"
-                            disabled={isLoading}
-                        >
-                            {isLoading
-                                ? "Loading..."
-                                : isSignUp
-                                ? "Sign Up"
-                                : "Update"}
-                        </button>
-                    </form>
-                    {isSignUp && (
-                        <>
-                            <h5>Already have an account?</h5>
-                            <hr />
-                            <h5>
-                                <Link to="/login" className="login">
-                                    Login
-                                </Link>
-                            </h5>
-                        </>
-                    )}
+                    </div>
                 </div>
+                {isSignUp && <img className="w-96 my-auto" src={vectorImg} />}
             </div>
         </>
     );

@@ -123,9 +123,9 @@ const AddTodo = () => {
     }
 
     return (
-        <div className="main-form-wrapper">
-            <div className="form-wrapper">
-                <form className="form" onSubmit={handleSubmit(onAdd)}>
+        <div className="card">
+            <div className="m-9 w-64">
+                <form className="m-auto w-60" onSubmit={handleSubmit(onAdd)}>
                     <div className="text-field">
                         <label htmlFor="title">Title: </label>
                         <input
@@ -147,7 +147,7 @@ const AddTodo = () => {
                             <span>{errors.description.message}</span>
                         )}
                     </div>
-                    <div className="text-field">
+                    <div className="text-field pt-7">
                         <label htmlFor="date">Date</label>
                         <input
                             type="date"
@@ -160,7 +160,11 @@ const AddTodo = () => {
                             <span>{errors.dueDate.message}</span>
                         )}
                     </div>
-                    <button type="submit" className="button btn-margin">
+
+                    <button
+                        type="submit"
+                        className=" my-10 mx-auto py-1 px-5 rounded block bg-blackPearl-600 text-neutral-200 hover:bg-blackPearl-700"
+                    >
                         {addMutation.isLoading || updateMutation.isLoading
                             ? "Loading"
                             : isAddTodo
