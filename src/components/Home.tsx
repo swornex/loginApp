@@ -1,6 +1,6 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useMemo, useState } from "react";
 import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -31,6 +31,49 @@ const Home = () => {
         }
     });
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [index, setIndex] = useState(0);
+    const recordsPerPage = useMemo(() => 2, []);
+    const totalRecords = useMemo(() => data?.length || 0, [data]);
+    const totalPage = useMemo(
+        () => Math.ceil(totalRecords / recordsPerPage),
+        [totalRecords, recordsPerPage]
+    );
+
+    const handlePrevButton = () => {
+        setCurrentPage((prev) => {
+            if (prev <= 1) {
+                return prev;
+            }
+
+            return prev - 1;
+        });
+
+        setIndex((prev) => {
+            if (prev - recordsPerPage < 0) {
+                return prev;
+            }
+
+            return prev - recordsPerPage;
+        });
+    };
+
+    const handleNextButton = () => {
+        setCurrentPage((prev) => {
+            if (prev >= totalPage) {
+                return prev;
+            }
+            return prev + 1;
+        });
+
+        setIndex((prev) => {
+            if (prev + recordsPerPage >= totalRecords) {
+                return prev;
+            }
+            return prev + recordsPerPage;
+        });
+    };
+
     const deleteMutation = useMutation({
         mutationFn: deleteTodoDoc,
         onSuccess: () => {
@@ -56,7 +99,7 @@ const Home = () => {
                 <thead>
                     <tr>
                         <th>Title</th>
-                        <th className="w-3/5">Description</th>
+                        <th className="w-2/4">Description</th>
                         <th>Due date</th>
                         <th>View</th>
                         <th>Edit</th>
@@ -64,7 +107,7 @@ const Home = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data?.map((list) => {
+                    {data?.slice(index, index + recordsPerPage).map((list) => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
@@ -101,6 +144,16 @@ const Home = () => {
                     })}
                 </tbody>
             </table>
+
+            <div className="flex items-center">
+                <button className="button-m" onClick={handlePrevButton}>
+                    Prev
+                </button>
+                {currentPage} of {totalPage}
+                <button className="button-m" onClick={handleNextButton}>
+                    Next
+                </button>
+            </div>
         </>
     );
 };
