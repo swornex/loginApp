@@ -1,6 +1,6 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,9 +11,16 @@ export type Todo = {
     title: string;
     description: string;
     dueDate: string;
+    createdAt: number;
+    updateAt: number;
+};
+
+type CurrentState = {
+    currentPage: number;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 };
 // Home component
-const Home = () => {
+const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     // Handle click event for the "Add Todo" button
@@ -22,56 +29,34 @@ const Home = () => {
         navigate("/todos/addtodo"); // Navigate to the "/todos/addtodo" route
     };
 
+    const [paginationData, setPaginationData] = useState<Todo[] | undefined>();
+
     // // Fetch todo documents from Firebase
     const queryClient = useQueryClient();
+
     const { data, isLoading } = useQuery({
-        queryKey: ["todos"],
+        queryKey: ["todos", currentPage],
         queryFn: () => {
-            if (user) return getTodoDocs(user.uid);
-        }
+            if (user) return getTodoDocs(user.uid, getCreatedDate());
+        },
+        staleTime: Infinity,
+        keepPreviousData: true
     });
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [index, setIndex] = useState(0);
-    const recordsPerPage = useMemo(() => 2, []);
-    const totalRecords = useMemo(() => data?.length || 0, [data]);
-    const totalPage = useMemo(
-        () => Math.ceil(totalRecords / recordsPerPage),
-        [totalRecords, recordsPerPage]
-    );
-
-    const handlePrevButton = () => {
-        setCurrentPage((prev) => {
-            if (prev <= 1) {
-                return prev;
-            }
-
-            return prev - 1;
-        });
-
-        setIndex((prev) => {
-            if (prev - recordsPerPage < 0) {
-                return prev;
-            }
-
-            return prev - recordsPerPage;
-        });
+    const getCreatedDate = () => {
+        return paginationData
+            ? paginationData[paginationData.length - 1].createdAt
+            : Date.now();
     };
 
-    const handleNextButton = () => {
-        setCurrentPage((prev) => {
-            if (prev >= totalPage) {
-                return prev;
-            }
-            return prev + 1;
-        });
+    useEffect(() => {
+        if (data) {
+            setPaginationData(data);
+        }
+    }, [data]);
 
-        setIndex((prev) => {
-            if (prev + recordsPerPage >= totalRecords) {
-                return prev;
-            }
-            return prev + recordsPerPage;
-        });
+    const handleNextButton = () => {
+        setCurrentPage((prev) => prev + 1);
     };
 
     const deleteMutation = useMutation({
@@ -84,7 +69,6 @@ const Home = () => {
     if (isLoading) {
         return <h2>Please wait while it loads</h2>;
     }
-
     return (
         <>
             <h1>Welcome to home page</h1>
@@ -107,7 +91,7 @@ const Home = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data?.slice(index, index + recordsPerPage).map((list) => {
+                    {paginationData?.map((list) => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
@@ -146,11 +130,20 @@ const Home = () => {
             </table>
 
             <div className="flex items-center">
-                <button className="button-m" onClick={handlePrevButton}>
+                <button
+                    className="button-m"
+                    onClick={() => {
+                        setCurrentPage((prev) => prev - 1);
+                    }}
+                    disabled={currentPage === 1}
+                >
                     Prev
                 </button>
-                {currentPage} of {totalPage}
-                <button className="button-m" onClick={handleNextButton}>
+                <button
+                    className="button-m"
+                    onClick={handleNextButton}
+                    disabled={data && data.length <= 1}
+                >
                     Next
                 </button>
             </div>

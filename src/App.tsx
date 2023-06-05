@@ -12,8 +12,11 @@ import Contact from "./components/Contact";
 import UserForm from "./components/userComponent/UserForm";
 import AddTodo from "./components/todoComponent/AddTodo";
 import ViewTodo from "./components/todoComponent/ViewTodo";
+import { useState } from "react";
 
 function App() {
+    const [currentPage, setCurrentPage] = useState(1);
+
     return (
         <>
             <AuthProvider>
@@ -26,7 +29,10 @@ function App() {
                                 <RequireAuth>
                                     <>
                                         <Navigation />
-                                        <Home />
+                                        <Home
+                                            currentPage={currentPage}
+                                            setCurrentPage={setCurrentPage}
+                                        />
                                     </>
                                 </RequireAuth>
                             }
@@ -88,7 +94,9 @@ function App() {
                                     <RequireAuth>
                                         <>
                                             <Navigation />
-                                            <AddTodo />
+                                            <AddTodo
+                                                currentPage={currentPage}
+                                            />
                                         </>
                                     </RequireAuth>
                                 }
@@ -110,7 +118,9 @@ function App() {
                                     <RequireAuth>
                                         <>
                                             <Navigation />
-                                            <AddTodo />
+                                            <AddTodo
+                                                currentPage={currentPage}
+                                            />
                                         </>
                                     </RequireAuth>
                                 }
