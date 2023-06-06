@@ -1,6 +1,6 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,9 +11,16 @@ export type Todo = {
     title: string;
     description: string;
     dueDate: string;
+    createdAt: number;
+    updateAt: number;
+};
+
+type CurrentState = {
+    currentPage: number;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 };
 // Home component
-const Home = () => {
+const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     // Handle click event for the "Add Todo" button
@@ -22,14 +29,45 @@ const Home = () => {
         navigate("/todos/addtodo"); // Navigate to the "/todos/addtodo" route
     };
 
+    const [paginationData, setPaginationData] = useState<Todo[] | undefined>();
+    const sizePerPage = 5;
+
     // // Fetch todo documents from Firebase
     const queryClient = useQueryClient();
+
     const { data, isLoading } = useQuery({
-        queryKey: ["todos"],
+        queryKey: ["todos", currentPage],
         queryFn: () => {
-            if (user) return getTodoDocs(user.uid);
-        }
+            if (user)
+                return getTodoDocs(user.uid, getCreatedDate(), sizePerPage);
+        },
+        staleTime: Infinity,
+        keepPreviousData: true
     });
+
+    // console.log(paginationData?.length);
+    const getCreatedDate = () => {
+        return paginationData
+            ? paginationData[paginationData.length - 2].createdAt
+            : Date.now();
+    };
+
+    useEffect(() => {
+        if (data) {
+            setPaginationData(data);
+        }
+    }, [data]);
+
+    const lastItem = useMemo(() => {
+        if (paginationData) {
+            return paginationData[sizePerPage - 1];
+        }
+    }, [paginationData]);
+    console.log(lastItem, paginationData);
+
+    const handleNextButton = () => {
+        setCurrentPage((prev) => prev + 1);
+    };
 
     const deleteMutation = useMutation({
         mutationFn: deleteTodoDoc,
@@ -41,7 +79,6 @@ const Home = () => {
     if (isLoading) {
         return <h2>Please wait while it loads</h2>;
     }
-
     return (
         <>
             <h1>Welcome to home page</h1>
@@ -56,7 +93,7 @@ const Home = () => {
                 <thead>
                     <tr>
                         <th>Title</th>
-                        <th className="w-3/5">Description</th>
+                        <th className="w-2/4">Description</th>
                         <th>Due date</th>
                         <th>View</th>
                         <th>Edit</th>
@@ -64,7 +101,7 @@ const Home = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data?.map((list) => {
+                    {paginationData?.slice(0, sizePerPage - 1).map((list) => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
@@ -101,6 +138,25 @@ const Home = () => {
                     })}
                 </tbody>
             </table>
+
+            <div className="flex items-center">
+                <button
+                    className="button-m"
+                    onClick={() => {
+                        setCurrentPage((prev) => prev - 1);
+                    }}
+                    disabled={currentPage === 1}
+                >
+                    Prev
+                </button>
+                <button
+                    className="button-m"
+                    onClick={handleNextButton}
+                    disabled={!lastItem}
+                >
+                    Next
+                </button>
+            </div>
         </>
     );
 };

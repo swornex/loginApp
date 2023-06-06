@@ -5,8 +5,11 @@ import {
     doc,
     getDoc,
     getDocs,
+    limit,
+    orderBy,
     query,
     setDoc,
+    startAfter,
     updateDoc,
     where
 } from "firebase/firestore";
@@ -27,25 +30,37 @@ export const addTodo = async ({
     try {
         // Generate a new unique ID for the todo document
         const id = doc(collection(db, "todos")).id;
-
+        const date = Date.now().valueOf();
         // Set the todo document in the "todos" collection with the provided data
         await setDoc(doc(db, "todos", id), {
             id,
             userId,
             title,
             description,
-            dueDate
+            dueDate,
+            createdAt: date,
+            updatedAt: date
         });
     } catch (error) {
         console.log(error.message);
     }
 };
 
-// Function to fetch all todo documents for a specific user
-export const getTodoDocs = async (userId: string) => {
+// Function to fetch all todo documents for a specific users
+export const getTodoDocs = async (
+    userId: string,
+    createdDate: number,
+    sizePerPage: number
+) => {
     // Retrieve all todo documents from the "todos" collection for the specified user
     const reference = collection(db, "todos");
-    const q = query(reference, where("userId", "==", userId));
+    const q = query(
+        reference,
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc"),
+        limit(sizePerPage),
+        startAfter(createdDate)
+    );
     const res = await getDocs(q);
 
     return res.docs.map((doc) => doc.data()) as Todo[]; // Return the fetched documents
@@ -81,7 +96,8 @@ export const updateTodoDoc = async ({
         await updateDoc(doc(db, "todos", id), {
             title,
             description,
-            dueDate
+            dueDate,
+            updatedAt: Date.now().valueOf()
         });
     } catch (error) {
         console.log(error.message);

@@ -11,7 +11,11 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { commonTodoSchema, CommonTodoType } from "../../schema/todoSchema";
 
-const AddTodo = () => {
+type CurrentPage = {
+    currentPage: number;
+};
+
+const AddTodo = ({ currentPage }: CurrentPage) => {
     const location = useLocation();
     const isAddTodo = location.pathname === "/todos/addtodo";
     const { id } = useParams();
@@ -58,6 +62,7 @@ const AddTodo = () => {
             if (id) return fetchOneTodo(id);
         }
     });
+
     //updating the todo based on fetched data
     useEffect(() => {
         if (id) {
@@ -73,7 +78,10 @@ const AddTodo = () => {
     }, [data, id, setValue]);
 
     const addMutation = useMutation({
-        mutationFn: addTodo
+        mutationFn: addTodo,
+        onSuccess: () => {
+            queryClient.invalidateQueries(["todos", currentPage]);
+        }
     });
 
     const updateMutation = useMutation({
