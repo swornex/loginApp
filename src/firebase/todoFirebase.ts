@@ -47,8 +47,11 @@ export const addTodo = async ({
 };
 
 // Function to fetch all todo documents for a specific users
-export const getTodoDocs = async (userId: string, createdDate: number) => {
-    const sizePerPage = 2;
+export const getTodoDocs = async (
+    userId: string,
+    createdDate: number,
+    sizePerPage: number
+) => {
     // Retrieve all todo documents from the "todos" collection for the specified user
     const reference = collection(db, "todos");
     const q = query(

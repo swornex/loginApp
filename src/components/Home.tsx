@@ -1,6 +1,6 @@
 // Import necessary modules and components
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { deleteTodoDoc, getTodoDocs } from "../firebase/todoFirebase";
 import { AuthContext } from "../authentication/AuthContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +30,7 @@ const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
     };
 
     const [paginationData, setPaginationData] = useState<Todo[] | undefined>();
+    const sizePerPage = 5;
 
     // // Fetch todo documents from Firebase
     const queryClient = useQueryClient();
@@ -37,15 +38,17 @@ const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
     const { data, isLoading } = useQuery({
         queryKey: ["todos", currentPage],
         queryFn: () => {
-            if (user) return getTodoDocs(user.uid, getCreatedDate());
+            if (user)
+                return getTodoDocs(user.uid, getCreatedDate(), sizePerPage);
         },
         staleTime: Infinity,
         keepPreviousData: true
     });
 
+    // console.log(paginationData?.length);
     const getCreatedDate = () => {
         return paginationData
-            ? paginationData[paginationData.length - 1].createdAt
+            ? paginationData[paginationData.length - 2].createdAt
             : Date.now();
     };
 
@@ -54,6 +57,13 @@ const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
             setPaginationData(data);
         }
     }, [data]);
+
+    const lastItem = useMemo(() => {
+        if (paginationData) {
+            return paginationData[sizePerPage - 1];
+        }
+    }, [paginationData]);
+    console.log(lastItem, paginationData);
 
     const handleNextButton = () => {
         setCurrentPage((prev) => prev + 1);
@@ -91,7 +101,7 @@ const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {paginationData?.map((list) => {
+                    {paginationData?.slice(0, sizePerPage - 1).map((list) => {
                         return (
                             <tr key={list.id}>
                                 <td>{list.title}</td>
@@ -142,7 +152,7 @@ const Home = ({ currentPage, setCurrentPage }: CurrentState) => {
                 <button
                     className="button-m"
                     onClick={handleNextButton}
-                    disabled={data && data.length <= 1}
+                    disabled={!lastItem}
                 >
                     Next
                 </button>
